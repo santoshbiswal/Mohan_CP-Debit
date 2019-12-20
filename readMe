@@ -1,0 +1,4797 @@
+Project Step - 1 : (Home Page For DTDC Courier)
+=================
+
+Static Controller For dtdc-home.jsp :
+=====================================
+->create a maven project
+->design ur pom as follows 
+
+pom.xml
+=======
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.dtdc</groupId>
+	<artifactId>CP-Debit</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>CP-Debit Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.0.2.RELEASE</version>
+	</parent>
+	
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-jasper</artifactId>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<!-- Package as an executable jar/war -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>
+
+->According folder structure for spring boot  web as follows
+	src
+	 |-main
+	 	|-webapp
+	 	    |-WEB-INF
+	 	    	|-jsp
+	 	    		|-*.jsp
+
+->create application.properties file as follows
+
+application.properties
+=======================
+
+server.port=9999
+
+spring.mvc.view.prefix=/WEB-INF/jsp/
+spring.mvc.view.suffix=.jsp
+
+dtdc-home.jsp
+=============
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="ISO-8859-1">
+		<title>DTDC - Intranet</title>
+	</head>
+	<body>
+		<h1>Welcome To DTDC Courier</h1>
+	</body>
+</html>
+
+HomeController.java
+===================
+
+@Controller
+public class HomeController {
+	
+	@RequestMapping("/dtdc-home.htm")
+	public String goToHome() {
+		
+		return "dtdc-home";
+	}
+}
+
+-> Write our main class as follows
+
+SpringBootApp.java
+==================
+
+@SpringBootApplication
+public class SpringBootApp {
+
+	public static void main(String[] args) {
+		
+		SpringApplication.run(SpringBootApp.class, args);
+	}
+}
+
+->run ur application and browse the following URL
+
+http://localhost:9999/dtdc-home.htm
+
+Project Step - 2 : (User Registration)
+=================
+
+Simple Form Controller For dtdc-registration.jsp :
+================================================
+
+->give hyperlink to dtdc-registration.jsp page inside dtdc-home.jsp.
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="ISO-8859-1">
+		<title>DTDC - Intranet</title>
+	</head>
+	<body>
+		<h1>Welcome To DTDC Courier</h1>
+		
+		<a href="#">SignUp</a><br/><br/>
+	</body>
+</html>
+
+-> add oracle dependency and spring data jpa for DB connectivity and some more related dependancy.
+
+pom.xml
+=======
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.dtdc</groupId>
+	<artifactId>CP-Debit</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>CP-Debit Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.0.2.RELEASE</version>
+	</parent>
+	
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-jasper</artifactId>
+		</dependency>
+		<!-- Spring data JPA, default tomcat pool, exclude it -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+           <!--  <exclusions>
+                <exclusion>
+                    <groupId>org.apache.tomcat</groupId>
+                    <artifactId>tomcat-jdbc</artifactId>
+                </exclusion>
+            </exclusions> -->
+        </dependency>
+		<!-- DB Dependancy -->
+		 <dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc14</artifactId>
+			<version>10.2.0.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version><!--$NO-MVN-MAN-VER$-->
+		</dependency>
+		<dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>jquery</artifactId>
+            <version>2.2.4</version>
+        </dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.2</version>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<!-- Package as an executable jar/war -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>
+
+-> write dataSource bean for connecting to oracle database and entityManagerFactory bean for scanning model/Enitity 
+   packages for Table Creation. add some hibernate properties  for table formation. also add TransactionManage
+   
+   Above all write inside our main class SpringBootApp.java.
+   
+ 
+    @Bean
+	public DataSource dataSource() {
+		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+
+		dataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
+		dataSource.setUsername("cpdebit");
+		dataSource.setPassword("cpdebit");
+		dataSource.setUrl("jdbc:oracle:thin:@localhost:1521:xe");
+
+		return dataSource;
+	}
+
+	@Bean
+	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+		em.setDataSource(dataSource());
+		em.setPackagesToScan(new String[] { "com.dtdc.cd.model" });
+
+		JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+		em.setJpaVendorAdapter(vendorAdapter);
+		em.setJpaProperties(additionalProperties());
+
+		return em;
+	}
+
+	@Bean
+	public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
+		return new PersistenceExceptionTranslationPostProcessor();
+	}
+
+	private Properties additionalProperties() {
+		Properties properties = new Properties();
+		properties.setProperty("hibernate.hbm2ddl.auto", "update");
+		properties.setProperty("hibernate.show_sql", "true");
+		properties.setProperty("hibernate.format_sql", "true");
+		properties.setProperty("hibernate.dialect", "org.hibernate.dialect.Oracle10gDialect");
+
+		return properties;
+	}
+
+	@Bean
+	public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
+		JpaTransactionManager transactionManager = new JpaTransactionManager();
+		transactionManager.setEntityManagerFactory(emf);
+
+		return transactionManager;
+	}
+   
+
+-> Create a Command class for submiting form as follows.
+
+RegistrationCommand.java
+========================
+
+public class RegistrationCommand {
+
+	private String addressLine1;
+	private String addressLine2;
+	private String city;
+	private String state;
+	private String country;
+	private long zip;
+	private String name;
+	private String phone;
+	private String email;
+	@DateTimeFormat(pattern="yyyy-MM-dd")//for date format as per db
+	private Date dob;
+	private String username;
+	private String password;
+	private String usertype;
+
+	//overwrite getter and setter	
+}
+
+
+
+->create a dtdc-registration.jsp page add springform taglib for form creation and give
+ modelAtribute to form for empty command object for GET and POST request as form submision.
+ 
+ and also create the required form element as per user requirement and create a error-div for validation.
+ 
+ dtdc-registration.jsp
+ =====================
+ 
+ <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ page isELIgnored="false" %>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="ISO-8859-1">
+		<title>Registration</title>
+	</head>
+	<body>
+		<h1>DTDC USER REGISTRATION</h1>
+		<form:form modelAttribute="dtdcRegistration">
+		
+			<div id="error-div">
+				<span style="color: red">
+					<form:errors path="*"/>
+				</span>
+			</div>
+			
+			<h3>ADDRESS</h3>
+			
+			<div id="address-div">
+				<table>
+					<tr>
+						<td>Address Line1</td>
+						<td>
+							<form:input path="addressLine1"/>
+						</td>
+					</tr>
+					<tr>
+						<td>Address Line2</td>
+						<td>
+							<form:input path="addressLine2"/>
+						</td>
+					</tr>
+					<tr>
+						<td>City</td>
+						<td>
+							<form:input path="city"/>
+						</td>
+					</tr>
+					<tr>
+						<td>State</td>
+						<td>
+							<form:input path="state"/>
+						</td>
+					</tr>
+					<tr>
+						<td>Country</td>
+						<td>
+							<form:input path="country"/>
+						</td>
+					</tr>
+					<tr>
+						<td>Zip</td>
+						<td>
+							<form:input path="zip"/>
+						</td>
+					</tr>
+				</table>
+			</div>
+			
+			<h3>USER</h3>
+			
+			<div id="user-div">
+				<table>
+					<tr>
+						<td>Name</td>
+						<td>
+							<form:input path="name"/>
+						</td>
+					</tr>
+					<tr>
+						<td>Phone</td>
+						<td>
+							<form:input path="phone"/>
+						</td>
+					</tr>
+					<tr>
+						<td>Email</td>
+						<td>
+							<form:input path="email" type="email"/>
+						</td>
+					</tr>
+					<tr>
+						<td>DOB</td>
+						<td>
+							<form:input path="dob" type="date"/>
+						</td>
+					</tr>
+				</table>
+			</div>
+			
+			<h3>Login-Info</h3>
+			
+			<div id="login-info-div">
+				<table>
+					<tr>
+						<td>Username</td>
+						<td>
+							<form:input path="username"/>
+						</td>
+					</tr>
+					<tr>
+						<td>Password</td>
+						<td>
+							<form:input path="password" type="password"/>
+						</td>
+					</tr>
+					<tr>
+						<td>Confirm Password</td>
+						<td>
+							<input type="password" name="confirmpass"/>
+						</td>
+					</tr>
+					<tr>
+						<td>User Type</td>
+						<td>
+							<form:select path="usertype">
+								<form:option value="">select</form:option>
+								<form:option value="corporate">corporate</form:option>
+								<form:option value="channel-partner">channel-partner</form:option>
+								<form:option value="delivery-partner">delivery-partner</form:option>
+							</form:select>
+						</td>
+					</tr>
+				</table>
+			</div>
+			
+			<!-- <h3>Account</h3> -->
+			
+			<!--<div id="account-div">
+					<table>
+						<tr>
+							<td></td>
+							<td></td>
+						</tr>
+					</table>
+				</div>  -->
+			
+			<div id="submit-div">
+				<table>
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td><input type="submit" value="Register"></td>
+						<td><input type="reset" value="Reset"></td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
+				</table>
+			</div>
+		</form:form>
+		
+		<a href="/dtdc-home.htm">Back</a>
+	</body>
+</html> 
+
+-> Here we need to hibernate relational mapping(ONE TO MANY) for USER and ADDRESS.
+  
+-> Create a model package for Entity class as USER and ADDRESS class.
+
+User.java
+=========
+
+@SuppressWarnings("serial")
+@Entity
+@Table(name = "DTDC_USER")
+public class User implements Serializable{
+	
+	@Id
+	@SequenceGenerator(name="SEQ_GEN_U_C",sequenceName = "SEQ_N_T_DTDC_USER",allocationSize=1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "SEQ_GEN_U_C")
+	@Column(name = "USER_ID")
+	private int userId;
+	private String name;
+	private String phone;
+	private String email;
+	private Date dob;
+	
+	@OneToMany(mappedBy = "user")
+	private Set<Address> addresses;
+	
+	//Setter and Getter
+
+}
+
+
+Address.java
+============
+
+@Entity
+@Table(name = "ADDRESS")
+public class Address {
+	
+	
+	@Id
+	@SequenceGenerator(name="SEQ_GEN_A_C",sequenceName = "SEQ_N_T_ADDRESS",allocationSize=1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "SEQ_GEN_A_C")
+	@Column(name = "AID")
+	private int addressId;
+	
+	@Column(name = "A_LINE1")
+	private String addressLine1;
+	
+	@Column(name = "A_LINE2")
+	private String addressLine2;
+	private String city;
+	private String state;
+	private String country;
+	private long zip;
+	
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "USER_ID")
+	private User user;
+
+	//Getter and Setter	
+}
+
+
+-> Create a repository package for Dao interface(extends from CrudRepository) as USER and ADDRESS class.
+
+UserRepository.java
+===================
+
+@Repository
+public interface UserRepository extends CrudRepository<User, Integer>{
+
+}
+
+AddressRepository.java
+======================
+
+@Repository
+public interface AddressRepository extends CrudRepository<Address, Integer>{
+
+}
+
+-> Create a service package for Business Related classes  USER and ADDRESS class.
+
+UserService.java
+================
+
+@Service
+public class UserService {
+
+	@Autowired
+	private UserRepository userRepository;
+	
+	public User saveUser(User user) {
+		
+		User user2 = new User();
+		
+		System.out.println("USERID : "+user2.getUserId());
+		
+		return userRepository.save(user);
+	}
+}
+
+AddressService.java
+===================
+
+@Service
+public class AddressService {
+
+	@Autowired
+	private AddressRepository addressRepository;
+	
+	public Address saveAddress(Address address) {
+		
+		Address address2 = new Address();
+		
+		System.out.println("AddressID : "+address2.getAddressId());
+		
+		return addressRepository.save(address);
+	}
+}
+
+
+-> Here we need to create deligate package for deligate class for extracting our different service. and all business logic
+   should write inside here.
+ 
+ DTDCRegistrationDeligate.java
+ =============================
+ 
+@Component
+public class DTDCRegistrationDeligate {
+
+	@Autowired
+	private AddressService addressService;
+	
+	@Autowired
+	private UserService userService;
+	
+	public boolean register(RegistrationCommand command) {
+		
+		User ul = extractUserFromCommand(command);
+		Address al = extractAddressFromCommand(command);
+		
+		User user = userService.saveUser(ul);
+		
+		al.setUser(user);
+		addressService.saveAddress(al);
+		
+		return true;
+	}
+	
+	private User extractUserFromCommand(RegistrationCommand command) {
+		
+		User user = new User();
+		
+		user.setName(command.getName());
+		user.setPhone(command.getPhone());
+		user.setEmail(command.getEmail());
+		user.setDob(command.getDob());	
+		
+		return user;
+	}
+	
+	public Address extractAddressFromCommand(RegistrationCommand command) {
+		
+		Address address = new Address();
+		
+		address.setAddressLine1(command.getAddressLine1());
+		address.setAddressLine2(command.getAddressLine2());
+		address.setCity(command.getCity());
+		address.setCountry(command.getCountry());
+		address.setState(command.getState());
+		address.setZip(command.getZip());
+		
+		return address;
+	}
+}
+
+-> After this we need to store login details also. So we need to do ONE-TO-ONE mapping for USER and LOGIN Table. 
+
+-> Create a model package for Entity class as Login for ONE-TO-ONE annotation mapping.
+
+Login.java
+==========
+
+@Entity
+@Table(name = "LOGIN")
+public class Login {
+
+	@Id
+	@Column(name = "login_user_id",unique = true,nullable = false)
+	@GeneratedValue(generator = "gen")
+	@GenericGenerator(name = "gen",strategy = "foreign",parameters = {@Parameter(name="property",value = "user")})
+	private int loginId;
+	private String username;
+	private String password;
+	private String role;
+	private String usertype;
+	
+	@OneToOne
+	@PrimaryKeyJoinColumn
+	private User user;
+
+	//Setter and Getter
+}
+
+-> Edit one-to-one mapping in USER class.
+
+User.java
+=========
+
+@SuppressWarnings("serial")
+@Entity
+@Table(name = "DTDC_USER")
+public class User implements Serializable{
+	
+	@Id
+	@SequenceGenerator(name="SEQ_GEN_U_C",sequenceName = "SEQ_N_T_DTDC_USER",allocationSize=1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "SEQ_GEN_U_C")
+	@Column(name = "USER_ID")
+	private int userId;
+	private String name;
+	private String phone;
+	private String email;
+	private Date dob;
+	
+	@OneToMany(mappedBy = "user")
+	private Set<Address> addresses;
+	
+	@OneToOne(mappedBy = "user")
+	@Cascade(value = CascadeType.SAVE_UPDATE)
+	private Login login;
+
+	//Setter and Getter
+}
+
+-> Write Repository class for Login.
+
+LoginRepository.java
+====================
+@Repository
+public interface LoginRepository extends CrudRepository<Login, Integer>{
+
+}
+
+
+-> Write Service class for Login.
+
+@Service
+public class LoginService {
+
+	@Autowired
+	private LoginRepository loginRepository;
+	
+	public Login saveLogin(Login login) {
+		
+		Login login2 = new Login();
+		System.out.println("LoginID : "+login2.getLoginId());
+		return loginRepository.save(login);
+	}	
+}
+
+-> call login service method using by deligate class.
+
+DTDCRegistrationDeligate.java
+=============================
+
+@Component
+public class DTDCRegistrationDeligate {
+
+	@Autowired
+	private AddressService addressService;
+	
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private LoginService loginService;
+	
+	public boolean register(RegistrationCommand command) {
+		
+		User ul = extractUserFromCommand(command);
+		Address al = extractAddressFromCommand(command);
+		Login log = extractLoginFromCommand(command);
+		
+		User user = userService.saveUser(ul);
+		
+		log.setUser(ul);
+		loginService.saveLogin(log);
+		
+		al.setUser(user);
+		addressService.saveAddress(al);
+		
+		return true;
+	}
+	
+	private Login extractLoginFromCommand(RegistrationCommand command) {
+		
+		Login login = new Login();
+		
+		login.setUsername(command.getUsername());
+		login.setPassword(command.getPassword());
+		login.setRole("USER");
+		login.setUsertype(command.getUsertype());
+		
+		return login;
+	}
+	
+	private User extractUserFromCommand(RegistrationCommand command) {
+		
+		User user = new User();
+		
+		user.setName(command.getName());
+		user.setPhone(command.getPhone());
+		user.setEmail(command.getEmail());
+		user.setDob(command.getDob());	
+		
+		return user;
+	}
+	
+	public Address extractAddressFromCommand(RegistrationCommand command) {
+		
+		Address address = new Address();
+		
+		address.setAddressLine1(command.getAddressLine1());
+		address.setAddressLine2(command.getAddressLine2());
+		address.setCity(command.getCity());
+		address.setCountry(command.getCountry());
+		address.setState(command.getState());
+		address.setZip(command.getZip());
+		
+		return address;
+	}
+} 
+
+-> Write one validator class for validating registration page.
+   For that we need to configure inside our main class (SpringBootApp.java) messageSource bean if we want to read validation error from properties file.
+   
+error.properties
+================
+#Error for Registration
+registration.addressLine1=AddressLine1 should not Empty
+registration.addressLine2=AddressLine2 should not Empty
+registration.city=City should not Empty
+registration.state=State should not Empty
+registration.country=Country should not Empty
+registration.zip=Zip should not Empty
+registration.name=Name should not Empty
+registration.phone=Phone should not Empty
+registration.email=Email should not Empty
+registration.dob=DOB should not Empty
+registration.username=Username should not Empty
+registration.password=Password should not Empty
+#registration.confirmpass=ConfirmPassword should not Empty
+registration.usertype=Please Select any of UserType  
+
+SpringBootApp.java
+==================
+
+@Bean(name="messageSource")
+	public MessageSource messageSource() {
+		
+		ResourceBundleMessageSource messageSource=new ResourceBundleMessageSource();
+		messageSource.setBasename("error");
+		
+		return messageSource;
+		
+}
+
+RegistrationValidator.java
+==========================
+
+@Component
+public class RegistrationValidator implements Validator {
+
+	@Override
+	public boolean supports(Class<?> clazz) {
+
+		if (clazz.isAssignableFrom(RegistrationCommand.class))
+			return true;
+
+		return false;
+	}
+
+	@Override
+	public void validate(Object target, Errors errors) {
+
+		RegistrationCommand command = (RegistrationCommand) target;
+
+		if (command.getAddressLine1() == null || "".equals(command.getAddressLine1())
+				|| command.getAddressLine1().isEmpty()) {
+
+			errors.rejectValue("addressLine1", "registration.addressLine1");
+		}
+
+		if (command.getAddressLine2() == null || "".equals(command.getAddressLine2())
+				|| command.getAddressLine2().isEmpty()) {
+
+			errors.rejectValue("addressLine2", "registration.addressLine2");
+		}
+
+		if (command.getCity() == null || "".equals(command.getCity())
+				|| command.getCity().isEmpty()) {
+
+			errors.rejectValue("city", "registration.city");
+		}
+
+		if (command.getState() == null || "".equals(command.getState())
+				|| command.getState().isEmpty()) {
+
+			errors.rejectValue("state", "registration.state");
+		}
+
+		if (command.getCountry() == null || "".equals(command.getCountry())
+				|| command.getCountry().isEmpty()) {
+
+			errors.rejectValue("country", "registration.country");
+		}
+
+		if (command.getZip() <= 0) {
+
+			errors.rejectValue("zip", "registration.zip");
+		}
+
+		if (command.getName() == null || "".equals(command.getName())
+				|| command.getName().isEmpty()) {
+
+			errors.rejectValue("name", "registration.name");
+		}
+		
+		if (command.getPhone() == null || "".equals(command.getPhone())
+				|| command.getPhone().isEmpty()) {
+
+			errors.rejectValue("phone", "registration.phone");
+		}
+
+		if (command.getEmail() == null || "".equals(command.getEmail())
+				|| command.getEmail().isEmpty()) {
+
+			errors.rejectValue("email", "registration.email");
+		}
+
+		if (command.getDob() == null || "".equals(command.getDob())) {
+
+			errors.rejectValue("dob", "registration.dob");
+		}
+
+		if (command.getUsername() == null || "".equals(command.getUsername())
+				|| command.getUsername().isEmpty()) {
+
+			errors.rejectValue("username", "registration.username");
+		}
+
+		if (command.getPassword() == null || "".equals(command.getPassword())
+				|| command.getPassword().isEmpty()) {
+
+			errors.rejectValue("password", "registration.password");
+		}
+
+		/*
+		 * if (command.getConfirmpass() == null || "".equals(command.getAddressLine1())
+		 * || command.getAddressLine1().isEmpty()) {
+		 * 
+		 * errors.rejectValue("confirmpass", "registration.confirmpass"); }
+		 */
+
+		if ("".equals(command.getUsertype())) {
+
+			errors.rejectValue("usertype", "registration.usertype");
+		}
+
+	}
+
+}
+
+-> Create Controller package for presentation logic for Registration Page. 
+
+
+@Controller
+public class DtdcRegistrationController {
+	
+	@Autowired
+	private RegistrationValidator validator;
+	
+	@Autowired
+	private DTDCRegistrationDeligate deligate;
+
+	@GetMapping("/dtdc-registration.htm")
+	public String goToRegistration() {
+		
+		return "dtdc-registration";
+	}
+	
+	@ModelAttribute("dtdcRegistration")
+	public RegistrationCommand emptyCommandObject() {
+		
+		return new RegistrationCommand();
+	}
+	
+	@PostMapping("/dtdc-registration.htm")
+	public String doRegister(@ModelAttribute("dtdcRegistration")RegistrationCommand command,BindingResult error) {
+		
+		if(validator.supports(RegistrationCommand.class)) {
+			
+			validator.validate(command, error);
+			if(error.hasErrors()) {
+				
+				return "dtdc-registration";
+			}
+		}
+		
+		System.out.println(command);
+		deligate.register(command);
+		return "registration-success";
+	}
+}
+
+-> add hyperlink as GET request for go to Registration page and for POST request must and should same mapping in controller
+   also for form submission.
+
+dtdc-home.jsp
+=============
+
+<html>
+	<head>
+		<meta charset="ISO-8859-1">
+		<title>DTDC - Intranet</title>
+	</head>
+	<body>
+		<h1>Welcome To DTDC Courier</h1>
+		
+		<a href="/dtdc-registration.htm">SignUp</a>
+	</body>
+</html>
+
+-> test in this URL - http://localhost:9999/dtdc-registration.htm .After form submission Registration success message will show.
+   and User and Address data will be stored in DB.
+   
+registration-success.jsp
+========================
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>Success</h1>
+	<a href="/dtdc-registration.htm">Back</a>
+</body>
+</html>
+
+-->  Now We are going to login After successful Registration.
+
+
+Project Step - 3 : (User Login)
+=================
+
+-> Here we need to login after successful registration.
+
+->give hyperlink to dtdc-login.jsp page inside dtdc-home.jsp.
+
+dtdc-home.jsp
+=============
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="ISO-8859-1">
+		<title>DTDC - Intranet</title>
+	</head>
+	<body>
+		<h1>Welcome To DTDC Courier</h1>
+		
+		<a href="/dtdc-registration.htm">SignUp</a><br/><br/>
+		<a href="#">SignIn</a>
+	</body>
+</html>
+
+-> Create a Command class for submiting form as follows.
+
+LoginCommand.java
+=================
+
+public class LoginCommand {
+
+	private String username;
+	private String password;
+	private String usertype;
+	
+	//Setter and Getter	
+}
+
+
+-> Create a dtdc-login.jsp page  for user Login & add springform taglib for form creation and give
+ modelAtribute to form for empty command object for GET and POST request as form submision.
+ 
+ and also create the required form element as per user requirement and create a error-div for validation.
+
+dtdc-login.jsp
+==============
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ page isELIgnored="false" %>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="ISO-8859-1">
+		<title>Login</title>
+	</head>
+	<body>
+		<h1>DTDC USER LOGIN</h1>
+		<form:form modelAttribute="dtdcLogin">
+			<div id="error-div">
+				<span style="color: red">
+					<form:errors path="*"/>
+				</span>
+			</div>
+			<div id="login-div">
+				<table>
+					<tr>
+						<td>UserName</td>
+						<td>
+							<form:input path="username"/>
+						</td>
+					</tr>
+					<tr>
+						<td>Password</td>
+						<td>
+							<form:input path="password" type="password"/>
+						</td>
+					</tr>
+					<tr>
+						<td>UserType</td>
+						<td>
+							<form:select path="usertype">
+								<form:option value="">select</form:option>
+								<form:option value="corporate">corporate</form:option>
+								<form:option value="channel-partner">channel-partner</form:option>
+								<form:option value="delivery-partner">delivery-partner</form:option>
+							</form:select>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div id="login-submit-div">
+				<table>
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td><input type="submit" value="login"></td>
+						<td><input type="reset" value="Reset"></td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
+				</table>
+			</div>
+		</form:form>
+		<a href="/dtdc-home.htm">Back</a>
+	</body>
+</html> 
+
+-> Here we need to fetch data from Login table as Login information. so we need create select query inside repository class.
+
+LoginRepository.java
+====================
+
+@Repository
+public interface LoginRepository extends CrudRepository<Login, Integer>{
+
+	@Query("select l.loginId from Login l where l.username=:username and l.password=:password and l.usertype=:usertype")
+	public Integer getLoginCount(@Param("username")String username,@Param("password")String password,@Param("usertype")String usertype);
+}
+
+-> call method to login service class from repository class and do validation logic inside that. 
+
+LoginService.java
+=================
+
+@Service
+public class LoginService {
+
+	@Autowired
+	private LoginRepository loginRepository;
+	
+	public Login saveLogin(Login login) {
+		
+		Login login2 = new Login();
+		System.out.println("LoginID : "+login2.getLoginId());
+		return loginRepository.save(login);
+	}
+	
+	public Integer validateLogin(LoginCommand command) throws UserNotFoundException {
+		
+		Integer userId = loginRepository.getLoginCount(command.getUsername(), command.getPassword(), command.getUsertype());
+		
+		System.out.println("USERID : "+userId);
+		
+		if(userId == null) {
+			
+			throw new UserNotFoundException("Please Enter Valid Username/Password...");
+		}
+		
+		return userId;
+	}
+}
+
+-> Create a Exception class if user unavailability in db.
+
+UserNotFoundException.java
+==========================
+
+public class UserNotFoundException extends Exception {
+
+	public UserNotFoundException() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public UserNotFoundException(String message) {
+		super(message);
+		// TODO Auto-generated constructor stub
+	}
+}
+
+->Before that we need to create validator class for User validation.
+
+LoginValidator.java
+===================
+
+@Component
+public class LoginValidator implements Validator{
+
+	@Override
+	public boolean supports(Class<?> clazz) {
+
+		if(clazz.isAssignableFrom(LoginCommand.class))
+			return true;
+			
+		return false;
+	}
+
+	@Override
+	public void validate(Object target, Errors errors) {
+
+		LoginCommand command = (LoginCommand) target;
+		
+		if(command.getUsername() == null || "".equals(command.getUsername()) || command.getUsername().isEmpty()) {
+			
+			errors.rejectValue("username", "login.username");
+		}
+		
+		if(command.getPassword() == null || "".equals(command.getPassword()) || command.getPassword().isEmpty()) {
+			
+			errors.rejectValue("password", "login.password");
+		}
+
+		if("".equals(command.getUsertype())) {
+			
+			errors.rejectValue("usertype", "login.usertype");
+		}
+	}
+
+}
+
+-> place error information inside properties file.
+
+error.properties
+================
+
+#Error for Login
+login.username=Username should not Empty
+login.password=Password should not Empty
+login.usertype=Please Select any of UserType
+login.invalid=Plz Enter Valid Username and Password 
+
+-> call service method from Service class to Controller for presentation logic for login and add also logout option for user login.
+so session will be expired.
+
+DtdcLoginController
+===================
+@Controller
+public class DtdcLoginController {
+	
+	@Autowired
+	private LoginValidator validator;
+	
+	@Autowired
+	private LoginService service;
+
+	@GetMapping("/dtdc-login.htm")
+	public String goToLogin() {
+		
+		return "dtdc-login";
+	}
+	
+	@ModelAttribute("dtdcLogin")
+	public LoginCommand emptyCommandObject() {
+		
+		return new LoginCommand();
+	}
+	
+	@PostMapping("/dtdc-login.htm")
+	public String doLogin(HttpSession session ,@ModelAttribute("dtdcLogin")LoginCommand command,BindingResult error) {
+		
+		if(validator.supports(LoginCommand.class)) {
+			
+			validator.validate(command, error);
+			if(error.hasErrors()) {
+				return "dtdc-login";
+			}
+		}
+		
+		try {
+			
+			Integer userId = service.validateLogin(command);
+			
+			session.setAttribute("userId", userId);
+			session.setAttribute("username", command.getUsername());
+			session.setAttribute("password", command.getPassword());
+			
+		}catch(UserNotFoundException e) {
+			
+			//errors.rejectValue("username", "login.invalid");
+			error.reject("username", e.getMessage());
+			
+			return "dtdc-login";
+		}
+		
+		if(command.getUsertype().equals("corporate")) {
+			
+			return "dtdc-corporate-dashboard";
+			
+		}else if(command.getUsertype().equals("channel-partner")) {
+			
+			return "dtdc-channel-partner-dashboard";
+			
+		}else if(command.getUsertype().equals("delivery-partner")) {
+			
+			return "dtdc-delivery-partner-dashboard";
+		}
+		
+		System.out.println(command);
+		
+		return "registration-success";
+		
+		
+	}
+	
+	@GetMapping("/dtdc-logout.htm")
+	public String doLogout(HttpSession session) {
+		
+		Integer userId=(Integer) session.getAttribute("userId");
+		System.out.println("User Id : "+userId);
+		
+		session.invalidate();
+		
+		return "dtdc-login";
+	}
+}
+
+-> add hyperlink as GET request for go to Login page and for POST request must and should same mapping in controller
+   also for form submission.
+
+<html>
+	<head>
+		<meta charset="ISO-8859-1">
+		<title>DTDC - Intranet</title>
+	</head>
+	<body>
+		<h1>Welcome To DTDC Courier</h1>
+		
+		<a href="/dtdc-registration.htm">SignUp</a><br/><br/>
+		<a href="/dtdc-login.htm">SignIn</a>
+	</body>
+</html>
+
+-> test in this URL - http://localhost:9999/dtdc-login.htm .After form submission Channel Partner Dashboard will show.
+   After that we need give hyperlink for shipment booking for further action.
+  
+dtdc-channel-partner-dashboard.jsp
+==================================
+
+<html>
+	<head>
+		<meta charset="ISO-8859-1">
+		<title>DTDC - CHANNEL PARTNER</title>
+	</head>
+	<body>
+		<h1>Welcome To DTDC Channel Partner</h1><br/>
+		<a href="#">Shipment Booking</a>
+	</body>
+</html>
+
+Project Step - 4 : (Channel Partner)
+=================
+
+-> Here we need to do shipment booking as per authorized user. for that we need to create a jsp page for shipment booking.
+
+-> Before that need to Create a Command class for submiting form as follows.
+
+ShipmentBookingCommand.java
+===========================
+
+public class ShipmentBookingCommand {
+
+	private String name;
+	private String phone;
+	private String email;
+	private String fromAddressLine1;
+	private String fromAddressLine2;
+	private String fromCity;
+	private String fromState;
+	private String fromCountry;
+	private long fromZip;
+	private String toAddressLine1;
+	private String toAddressLine2;
+	private String toCity;
+	private String toState;
+	private String toCountry;
+	private long toZip;
+	private String vasProdCode;
+	private String source;
+	private String destination;
+	private int price;
+	private float itemWeight;
+	@DateTimeFormat(pattern="yyyy-MM-dd")
+	private Date bookingDtTime;
+	private String bookingParcelType;
+	private int quantity;
+	private int userId;
+	
+	//setter and getter
+}
+
+shipment-booking.jsp
+====================
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ page isELIgnored="false" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Shipment Booking</title>
+<script type="text/javascript" src="webjars/jquery/2.2.4/jquery.min.js"></script>
+<script type="text/javascript">
+
+	$(window).load(function(){
+
+		var userId = '${userId}'; 
+
+		if(userId == ""){
+
+			window.location.replace("http://localhost:9999/dtdc-logout.htm");
+		}
+	});
+
+	write logic here -> for auto populate source and destination ->
+	
+    ->write logic for ajax request for populating price.
+	
+	
+</script>
+</head>
+<body bgcolor="GreenYellow">
+	<h1>Welcome To Channel Partner Booking</h1>
+	<form:form modelAttribute="bookingCommand">
+		<div id="error-div">
+			<span style="color: red"> <form:errors path="*" /></span>
+		</div>
+		<div id="customer-details-div">
+			<table border="1px" style="background-color: Fuchsia">
+				<tr>
+					<td>Name:</td>
+					<td><form:input path="name" /></td>
+				</tr>
+				<tr>
+					<td>Phone:</td>
+					<td><form:input path="phone" /></td>
+				</tr>
+				<tr>
+					<td>Email:</td>
+					<td><form:input path="email" /></td>
+				</tr>
+				<tr>
+					<td height="30px">
+						<div align="center"
+							style="width: 250px; height: 70%; background-color: Yellow; border-radius: 7px;">FROM</div>
+					</td>
+					<td height="30px">
+						<div align="center"
+							style="width: 250px; height: 70%; background-color: Yellow; border-radius: 7px;">TO</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<table border="1px" style="background-color: Turquoise">
+							<tr>
+								<td>address Line1:</td>
+								<td><form:input path="fromAddressLine1" /></td>
+							</tr>
+							<tr>
+								<td>address Line2:</td>
+								<td><form:input path="fromAddressLine2" /></td>
+							</tr>
+							<tr>
+								<td>city:</td>
+								<td><form:select path="fromCity" id="fromCity">
+										<form:option value="">Select</form:option>
+										<form:option value="Bangalore">Bangalore</form:option>
+										<form:option value="Chennai">Chennai</form:option>
+										<form:option value="Hyderabad">Hyderabad</form:option>
+										<form:option value="Bhubaneswar">Bhubaneswar</form:option>
+									</form:select></td>
+							</tr>
+							<tr>
+								<td>state:</td>
+								<td><form:input path="fromState" /></td>
+							</tr>
+							<tr>
+								<td>country:</td>
+								<td><form:input path="fromCountry" /></td>
+							</tr>
+							<tr>
+								<td>zip:</td>
+								<td><form:input path="fromZip" /></td>
+							</tr>
+						</table>
+					</td>
+					<td>
+						<table border="1px" style="background-color: Turquoise">
+							<tr>
+								<td>address Line1:</td>
+								<td><form:input path="toAddressLine1" /></td>
+							</tr>
+							<tr>
+								<td>address Line2:</td>
+								<td><form:input path="toAddressLine2" /></td>
+							</tr>
+							<tr>
+								<td>city:</td>
+								<td><form:select path="toCity" id="toCity">
+										<form:option value="">Select</form:option>
+										<form:option value="Bangalore">Bangalore</form:option>
+										<form:option value="Chennai">Chennai</form:option>
+										<form:option value="Hyderabad">Hyderabad</form:option>
+										<form:option value="Bhubaneswar">Bhubaneswar</form:option>
+									</form:select></td>
+							</tr>
+							<tr>
+								<td>state:</td>
+								<td><form:input path="toState" /></td>
+							</tr>
+							<tr>
+								<td>country:</td>
+								<td><form:input path="toCountry" /></td>
+							</tr>
+							<tr>
+								<td>zip:</td>
+								<td><form:input path="toZip" /></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div id="booking-details-div">
+			<table>
+				<tr>
+					<td>Vas-Prod-Code:</td>
+					<td><form:select path="vasProdCode">
+							<form:option value="">select</form:option>
+							<form:option value="cod">cod</form:option>
+							<form:option value="fod">fod</form:option>
+							<form:option value="pob">pob</form:option>
+						</form:select></td>
+				</tr>
+				<tr>
+					<td>Source:</td>
+					<td><form:input path="source" id="source"/></td>
+				</tr>
+				<tr>
+					<td>Destination</td>
+					<td><form:input path="destination" id="destination"/></td>
+				</tr>
+				<tr>
+					<td>Price:</td>
+					<td><form:input path="price"/></td>
+				</tr>
+				<tr>
+					<td>Weight:</td>
+					<td><form:input path="itemWeight" /></td>
+				</tr>
+				<tr>
+					<td>Booking Dt Time :</td>
+					<td><form:input path="bookingDtTime" type="date" /></td>
+				</tr>
+				<tr>
+					<td>BookingParsalType:</td>
+					<td><form:select path="bookingParcelType">
+							<form:option value="">select</form:option>
+							<form:option value="a">A</form:option>
+							<form:option value="b">B</form:option>
+						</form:select></td>
+				</tr>
+				<tr>
+					<td>Quantity:</td>
+					<td>
+						<form:input path="quantity" />
+						<form:hidden path="userId" value="${userId}"/>
+					</td>
+				</tr>
+				<tr>
+					<td><input type="submit" value="Booking" /></td>
+					<td><input type="reset" value="Reset"></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+				</tr>
+			</table>
+		</div>
+	</form:form>
+	
+	<a href="/dtdc-logout.htm">Logout</a>
+</body>
+</html>
+
+-> For Populating source and destination automatically by choosing from and to city using JQUERY and from and to city 
+   should not same.
+   
+   write logic here -> for auto populate source and destination ->
+   
+   $(document).ready(function(){
+
+		$("#fromCity").change(function(){
+
+			var city = $("#fromCity").val();
+			
+			$("#source").val(city);
+		});
+
+		$("#toCity").change(function(){
+
+			var toCity = $("#toCity").val();
+
+			var fromCity = $("#fromCity").val();
+
+			if(fromCity == toCity){
+
+				alert("City Violation !!!!");
+				$("#destination").val("");
+				$("#toCity").val(0);
+				return;
+			}
+
+			$("#destination").val(toCity);
+			
+			getBookingPrice();//call AJAX request url mapping.
+		});
+
+	});
+   
+   -> for populating price automatically fetching from db by selecting source and destination. so we need to use AJAX request.
+   
+   -> for that we need to write select query for fetching price from DTDC_SERVICE table inside repository class.
+   
+    ShipmentBookingRepository.java
+    =============================
+   
+    @Repository
+	public interface ShipmentBookingRepository extends CrudRepository<ShipmentBooking, String>{
+
+		@Query(value = "SELECT price FROM DTDC_SERVICE s WHERE s.SOURCE=:source and s.DESTINATION=:destination",nativeQuery = true)
+		public Integer findPrice(@Param("source")String source,@Param("destination")String destination);
+	
+	}
+	
+-> then that price method need to give to service class.
+	
+	
+@Service
+public class ShipmentBookingService {
+
+	@Autowired
+	private ShipmentBookingRepository repository;
+	
+	public Integer getPriceBySourceAndDestination(String source,String destination) {
+		
+		return repository.findPrice(source, destination);
+	}
+	
+	public ShipmentBooking findById(String id) {
+		
+		Optional<ShipmentBooking> optional= repository.findById(id);
+		ShipmentBooking ob=null;
+		if(optional.isPresent()) {
+			ob=optional.get();
+		}
+		
+		return ob;
+	}
+}
+
+-> then create a search criteria class for searching input details by AJAX request.
+
+ShipmentPriceSearchCriteria.java
+================================
+
+public class ShipmentPriceSearchCriteria {
+
+	private String source;
+	private String destination;
+	
+	//getter and setter	
+}
+
+-> then create a response class for price as per AJAX response.
+
+ShipmentPriceResponse.java
+==========================
+
+public class ShipmentPriceResponse {
+	
+	private Integer price;
+
+	//getter and setter	
+}
+
+->then create restcontroller as ajax for populating price in jsp page.
+
+@RestController
+public class ShipmentPriceAjaxController {
+
+	@Autowired
+	private ShipmentBookingService service;
+	
+	@PostMapping("/api/find-price")
+	public ResponseEntity<?> getBookingPrice(@RequestBody ShipmentPriceSearchCriteria criteria){
+		
+		Integer price = service.getPriceBySourceAndDestination(criteria.getSource(), criteria.getDestination());
+		System.out.println("PRICE : "+price);
+		ShipmentPriceResponse response = new ShipmentPriceResponse();
+		response.setPrice(price);
+		
+		return ResponseEntity.ok(response);
+	}
+}
+
+-> Here we need to give AJAX url mapping inside jsp page for AJAX request.
+
+->write logic for ajax request for populating price.
+ 
+	function getBookingPrice(){
+
+		var source = $("#source").val();
+		var dest = $("#destination").val();
+
+		var search={};
+
+		search["source"]=source;
+		search["destination"]=dest;
+
+			$.ajax({
+
+				  type: "POST",
+	              contentType: "application/json",
+	              url: "/api/find-price",
+	              data: JSON.stringify(search),
+	              dataType: 'json',
+	              cache: false,
+	              timeout: 600000,
+	              success: function(result){
+
+						populatePrice(result);
+		          },
+		          error: function(e){
+
+				  }
+
+			});
+	};
+
+	function populatePrice(result){
+
+		$("#price").val(result.price);
+	} 
+ 
+
+-> Now We are going to store customer details, customer booking address and shipment booking as per form input.
+
+   First of all we will store customer details with shipment booking by mapping as ONE-TO-ONE using MANY-TO-ONE relationship.
+   
+   
+-> For that create a Customer details entity class.
+
+DtdcCustomerBooking.java
+========================
+
+@Entity
+@Table(name = "DTDC_CUSTOMER_BOOKING")
+public class DtdcCustomerBooking {
+
+	@Id
+	@SequenceGenerator(name = "seq_customer",sequenceName = "customer_sequence",allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "seq_customer")
+	@Column(name = "CUST_BOOK_ID")
+	private int custBookID;
+	private String name;
+	private String phone;
+	private String email;
+	
+	@OneToOne(mappedBy = "dtdcCustBooking")
+	private ShipmentBooking shipBooking;
+	
+	//setter and getter	
+} 
+
+-> Then need to create Shipment Booking entity class and also create ConsignmentNumberCustomKeyGenerator class for custom sequence.
+
+ShipmentNumberCustomKeyGen.java
+===============================
+
+public class ShipmentNumberCustomKeyGen extends SequenceStyleGenerator{
+
+	public static final String VALUE_PREFIX_PARAMETER = "valuePrefix";
+	public static final String VALUE_PREFIX_DEFAULT = "";
+	private String valuePrefix;
+
+	public static final String NUMBER_FORMAT_PARAMETER = "numberFormat";
+	public static final String NUMBER_FORMAT_DEFAULT = "%d";
+	private String numberFormat;
+	
+	@Override
+	public void configure(Type type, Properties params, ServiceRegistry serviceRegistry) throws MappingException {
+
+		super.configure(LongType.INSTANCE, params, serviceRegistry);
+		valuePrefix = ConfigurationHelper.getString(VALUE_PREFIX_PARAMETER, params, VALUE_PREFIX_DEFAULT);
+		numberFormat = ConfigurationHelper.getString(NUMBER_FORMAT_PARAMETER, params, NUMBER_FORMAT_DEFAULT);
+		
+	}
+
+	@Override
+	public Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
+
+		return valuePrefix + String.format(numberFormat, super.generate(session, object));
+	}
+
+	
+}
+
+-> In shipment booking also use channel-partner-id column as foreign key to DTDC-USER table in USER_ID PK.
+
+ShipmentBooking.java
+====================
+
+@Entity
+@Table(name = "SHIPMENT_BOOKING")
+public class ShipmentBooking {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "shipment_seq")
+	@GenericGenerator(name = "shipment_seq",strategy = "com.dtdc.cd.model.ShipmentNumberCustomKeyGen",
+		parameters = {
+				@Parameter(name = ShipmentNumberCustomKeyGen.INCREMENT_PARAM, value = "1"),
+	            @Parameter(name = ShipmentNumberCustomKeyGen.VALUE_PREFIX_PARAMETER, value = "I"),
+	            @Parameter(name = ShipmentNumberCustomKeyGen.NUMBER_FORMAT_PARAMETER, value = "%04d"),
+	            @Parameter(name = "sequence_name", value = "shipment_sequence"),
+	            @Parameter(name = "initial_value", value = "1")				
+		})
+	@Column(name = "CONSG_NO")
+	private String consg_number;
+	
+	@Column(name = "VAS_PROD_CODE")
+	private String vasProdCode;
+	
+	@Column(name = "BOOKING_PRICE")
+	private int price;
+	
+	@Column(name = "ITEM_WEIGHT")
+	private float itemWeight;
+	private String source;
+	private String destination;
+	
+	@Column(name = "BOOKING_DATE_TIME")
+	private Date bookingDtTime;
+	
+	@Column(name = "BOOKING_PARCEL_TYPE")
+	private String bookingParcelType;
+	private int quantity;
+	
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "CHANNEL_PARTNER_ID")
+	private User user;
+	
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "CUST_BOOK_ID")
+	private DtdcCustomerBooking dtdcCustBooking;
+  
+ 	//getter and setter  
+}
+
+-> create repository class for customer details.
+
+DtdcCustomerBookingRepository.java
+==================================
+
+@Repository
+public interface DtdcCustomerBookingRepository extends CrudRepository<DtdcCustomerBooking, Integer> {
+
+}
+
+-> create repository class for shipment details.
+
+ShipmentBookingRepository.java
+==============================
+
+@Repository
+public interface ShipmentBookingRepository extends CrudRepository<ShipmentBooking, String>{
+
+	@Query(value = "SELECT price FROM DTDC_SERVICE s WHERE s.SOURCE=:source and s.DESTINATION=:destination",nativeQuery = true)
+	public Integer findPrice(@Param("source")String source,@Param("destination")String destination);
+	
+}
+
+
+-> create service class for customer details.
+
+DtdcCustomerBookingService.java
+===============================
+
+@Service
+public class DtdcCustomerBookingService {
+
+	@Autowired
+	private DtdcCustomerBookingRepository repository;
+	
+	public DtdcCustomerBooking saveCustomer(DtdcCustomerBooking booking) {
+		
+		return repository.save(booking);
+	}
+}
+
+-> create service class for shipment details.
+
+ShipmentBookingService.java
+===========================
+
+@Service
+public class ShipmentBookingService {
+
+	@Autowired
+	private ShipmentBookingRepository repository;
+	
+	public ShipmentBooking doBookingShipment(ShipmentBooking booking) {
+		
+		ShipmentBooking shipmentBooking = repository.save(booking);
+		return shipmentBooking;
+	}
+	
+	public Integer getPriceBySourceAndDestination(String source,String destination) {
+		
+		return repository.findPrice(source, destination);
+	}
+
+	public ShipmentBooking findById(String id) {
+		
+		Optional<ShipmentBooking> optional= repository.findById(id);
+		ShipmentBooking ob=null;
+		if(optional.isPresent()) {
+			ob=optional.get();
+		}
+		
+		return ob;
+	}
+}
+
+-> create a delegate class for handling multiple service in one delegate class.
+
+
+@Component
+public class DTDCBookingDeligate {
+	
+	@Autowired
+	private DtdcCustomerBookingService customerService;
+	
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private ShipmentBookingService shipmentBookingService;
+	
+	public boolean doDtdcBooking(ShipmentBookingCommand command) throws UserNotFoundException {
+		
+		//Save Customer
+		DtdcCustomerBooking custmerBooking = extractDtdcCustomerFromShipmentBookingCommand(command);
+		DtdcCustomerBooking bookingCustmer = customerService.saveCustomer(custmerBooking);
+		
+		//Save booking	
+		ShipmentBooking shipBooking = extractShipmentBookingFromShipmentBookingCommand(command);
+		User user = userService.getUserById(command.getUserId());
+		
+		shipBooking.setUser(user);
+		shipBooking.setDtdcCustBooking(bookingCustmer);
+		
+		ShipmentBooking shipmentBooking = shipmentBookingService.doBookingShipment(shipBooking);
+		
+		return true;
+	}
+	
+	private DtdcCustomerBooking extractDtdcCustomerFromShipmentBookingCommand(ShipmentBookingCommand command) {
+		
+		DtdcCustomerBooking bookingCustomer = new DtdcCustomerBooking();
+		
+		bookingCustomer.setName(command.getName());
+		bookingCustomer.setPhone(command.getPhone());
+		bookingCustomer.setEmail(command.getEmail());
+		
+		return bookingCustomer;
+	}
+	
+	private ShipmentBooking extractShipmentBookingFromShipmentBookingCommand(ShipmentBookingCommand command) {
+		
+		ShipmentBooking booking=new ShipmentBooking();
+		
+		booking.setBookingDtTime(command.getBookingDtTime());
+		booking.setBookingParcelType(command.getBookingParcelType());
+		booking.setDestination(command.getDestination());
+		booking.setSource(command.getSource());
+		booking.setItemWeight(command.getItemWeight());
+		booking.setPrice(command.getPrice());
+		booking.setVasProdCode(command.getVasProdCode());
+		booking.setQuantity(command.getQuantity());
+		
+		return booking;
+	}
+	
+	
+}
+
+-> Next Process we will store customer details with shipment booking address by mapping 
+   as ONE-TO-MANY relationship.
+   
+   DtdcCustomerBooking.java
+   ========================
+   
+   @Entity
+   @Table(name = "DTDC_CUSTOMER_BOOKING")
+   public class DtdcCustomerBooking {
+
+		@Id
+		@SequenceGenerator(name = "seq_customer",sequenceName = "customer_sequence",allocationSize = 1)
+		@GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "seq_customer")
+		@Column(name = "CUST_BOOK_ID")
+		private int custBookID;
+		private String name;
+		private String phone;
+		private String email;
+		
+		@OneToOne(mappedBy = "dtdcCustBooking")
+		private ShipmentBooking shipBooking;
+		
+		@OneToMany(mappedBy = "customerBooking")
+		private Set<CustomerBookingAddress> bookingaddresses;
+		
+		//setter and getter
+		
+	}
+	
+	CustomerBookingAddress.java
+	===========================
+	
+	@Entity
+	@Table(name = "CUSTOMER_BOOKING_ADDRESS")
+	public class CustomerBookingAddress {
+
+		@Id
+		@SequenceGenerator(name = "book_cust_seq", sequenceName = "sequence_cust_add",allocationSize = 1)
+		@GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "book_cust_seq")
+		@Column(name = "CUST_AID")
+		private int custAid;
+		
+		@Column(name = "A_LINE1")
+		private String addressLine1;
+		
+		@Column(name = "A_LINE2")
+		private String addressLine2;
+		private String city;
+		private String state;
+		private String country;
+		private long zip;
+		
+		@Column(name = "ADDRESS_TYPE")
+		private String addressType;
+		
+	
+		@ManyToOne(cascade = CascadeType.ALL)
+		@JoinColumn(name = "CUST_BOOK_ID")
+		private DtdcCustomerBooking customerBooking;
+		
+		//setter and getter
+
+	}
+	
+	CustomerBookingAddressRepository.java
+	=====================================
+	
+	@Repository
+	public interface CustomerBookingAddressRepository extends CrudRepository<CustomerBookingAddress, Integer>{
+
+	}
+	
+	CustomerBookingAddressService.java
+	==================================
+	
+	@Service
+	public class CustomerBookingAddressService {
+
+		@Autowired
+		private CustomerBookingAddressRepository custAddressRepository;
+		
+		public CustomerBookingAddress saveCustomerAddress(CustomerBookingAddress customerBookingAddress) {
+			
+			return custAddressRepository.save(customerBookingAddress);
+		}
+	}
+	
+	
+	DTDCBookingDeligate.java
+	========================
+	
+	@Component
+	public class DTDCBookingDeligate {
+
+		@Autowired
+		private CustomerBookingAddressService customerAddressService;
+		
+		@Autowired
+		private DtdcCustomerBookingService customerService;
+		
+		@Autowired
+		private UserService userService;
+		
+		@Autowired
+		private ShipmentBookingService shipmentBookingService;
+		
+		public boolean doDtdcBooking(ShipmentBookingCommand command) throws UserNotFoundException {
+			
+			//Save Customer
+			DtdcCustomerBooking custmerBooking = extractDtdcCustomerFromShipmentBookingCommand(command);
+			DtdcCustomerBooking bookingCustmer = customerService.saveCustomer(custmerBooking);
+			
+			//Save From and To address
+			CustomerBookingAddress fromBookingAddress = extractCustomerBookingAddressFromShipmentBookingCommand(command,bookingCustmer);
+			CustomerBookingAddress toBookingAddress = extractCustomerBookingAddressToShipmentBookingCommand(command, bookingCustmer);
+			
+			customerAddressService.saveCustomerAddress(fromBookingAddress);
+			customerAddressService.saveCustomerAddress(toBookingAddress);
+			
+			//Save booking	
+			ShipmentBooking shipBooking = extractShipmentBookingFromShipmentBookingCommand(command);
+			User user = userService.getUserById(command.getUserId());
+			
+			shipBooking.setUser(user);
+			shipBooking.setDtdcCustBooking(bookingCustmer);
+			
+			ShipmentBooking shipmentBooking = shipmentBookingService.doBookingShipment(shipBooking);
+			
+			return true;
+		}
+		
+		private CustomerBookingAddress extractCustomerBookingAddressFromShipmentBookingCommand(ShipmentBookingCommand command,DtdcCustomerBooking customerBooking) {
+			
+			CustomerBookingAddress bookingAddress = new CustomerBookingAddress();
+			
+			bookingAddress.setAddressLine1(command.getFromAddressLine1());
+			bookingAddress.setAddressLine2(command.getFromAddressLine2());
+			bookingAddress.setCity(command.getFromCity());
+			bookingAddress.setState(command.getFromState());
+			bookingAddress.setCountry(command.getFromCountry());
+			bookingAddress.setZip(command.getFromZip());
+			bookingAddress.setCustomerBooking(customerBooking);
+			bookingAddress.setAddressType("FROM");
+			
+			return bookingAddress;
+		}
+		
+		private CustomerBookingAddress extractCustomerBookingAddressToShipmentBookingCommand(ShipmentBookingCommand command,DtdcCustomerBooking customerBooking) {
+			
+			CustomerBookingAddress bookingAddress = new CustomerBookingAddress();
+			
+			bookingAddress.setAddressLine1(command.getToAddressLine1());
+			bookingAddress.setAddressLine2(command.getToAddressLine2());
+			bookingAddress.setCity(command.getToCity());
+			bookingAddress.setState(command.getToState());
+			bookingAddress.setCountry(command.getToCountry());
+			bookingAddress.setZip(command.getToZip());
+			bookingAddress.setCustomerBooking(customerBooking);
+			bookingAddress.setAddressType("TO");
+			
+			return bookingAddress;
+		}
+		
+		private DtdcCustomerBooking extractDtdcCustomerFromShipmentBookingCommand(ShipmentBookingCommand command) {
+			
+			DtdcCustomerBooking bookingCustomer = new DtdcCustomerBooking();
+			
+			bookingCustomer.setName(command.getName());
+			bookingCustomer.setPhone(command.getPhone());
+			bookingCustomer.setEmail(command.getEmail());
+			
+			return bookingCustomer;
+		}
+		
+		private ShipmentBooking extractShipmentBookingFromShipmentBookingCommand(ShipmentBookingCommand command) {
+			
+			ShipmentBooking booking=new ShipmentBooking();
+			
+			booking.setBookingDtTime(command.getBookingDtTime());
+			booking.setBookingParcelType(command.getBookingParcelType());
+			booking.setDestination(command.getDestination());
+			booking.setSource(command.getSource());
+			booking.setItemWeight(command.getItemWeight());
+			booking.setPrice(command.getPrice());
+			booking.setVasProdCode(command.getVasProdCode());
+			booking.setQuantity(command.getQuantity());
+			
+			return booking;
+		}
+		
+	
+	}
+	
+	
+	
+	->create one validator class for shipment booking validation.
+	
+	@Component
+	public class ShipmentBookingValidator implements Validator{
+	
+		@Override
+		public boolean supports(Class<?> clazz) {
+			
+			if(clazz.isAssignableFrom(ShipmentBookingCommand.class))
+				return true;
+			
+			return false;
+		}
+	
+		@Override
+		public void validate(Object target, Errors errors) {
+	
+			ShipmentBookingCommand command = (ShipmentBookingCommand) target;
+			
+			if(command.getName() == null || "".equals(command.getName()) || command.getName().isEmpty()) {
+				
+				errors.rejectValue("name", "booking.name");
+			}
+		}
+	}
+	
+	
+	error.properties
+	================
+	#Error for Shipment Booking
+	booking.name=Name should not Empty
+	
+	
+	-> create controller class for presentation layer of shipment booking.
+	
+	DtdcShipmentBookingController
+	=============================
+	
+	@Controller
+	public class DtdcShipmentBookingController {
+		
+		@Autowired
+		private ShipmentBookingValidator validator;
+		
+		@Autowired
+		private DTDCBookingDeligate deligate;
+	
+		@GetMapping("/dtdc-booking.htm")
+		public String goToBooking() {
+			
+			return "shipment-booking";
+		}
+		
+		@ModelAttribute("bookingCommand")
+		public ShipmentBookingCommand emptyBookingCommandObject() {
+			
+			return new ShipmentBookingCommand();
+		}
+		
+		@PostMapping("/dtdc-booking.htm")
+		public String doShipmentBooking(@ModelAttribute("bookingCommand")ShipmentBookingCommand command,BindingResult errors) throws UserNotFoundException {
+			
+			if(validator.supports(ShipmentBookingCommand.class)) {
+				
+				validator.validate(command, errors);
+				
+				if(errors.hasErrors()) {
+					
+					return "shipment-booking";
+				}
+			}
+			System.out.println(command);
+			deligate.doDtdcBooking(command);
+			
+			return "booking-success";
+		}
+	}
+	
+	-> add hyperlink as GET request for go to shipment booking page and for POST request must and should same mapping in controller
+	   also for booking form submission. 
+	   
+	dtdc-channel-partner-dashboard.jsp
+	==================================
+	   
+	<html>
+		<head>
+			<meta charset="ISO-8859-1">
+			<title>DTDC - CHANNEL PARTNER</title>
+		</head>
+		<body>
+			<h1>Welcome To DTDC Channel Partner</h1><br/>
+			<a href="/dtdc-booking.htm">Shipment Booking</a>
+		</body>
+	</html>
+	
+	-> test in this URL - http://localhost:9999/dtdc-booking.htm .After form submission Booking success message will show.
+	   and Customer Details, Address Details & Shipping Details data will be stored in DB.
+	   
+	booking-success.jsp
+	===================
+	
+	html>
+		<head>
+			<meta charset="ISO-8859-1">
+			<title>DTDC - CHANNEL PARTNER</title>
+		</head>
+		<body>
+			<h1>Success</h1>
+		</body>
+	</html>
+	
+Project Step - 5 : (Delivery Partner)
+=====================================
+
+Here I want to fetch pending delivery data into Shipment Delivery Table from Shipment Booking Table as per consignment number. So we need to use Scheduler.
+
+-> First we need to annotate @EnableSheduling in our main class Application.
+
+SpringBootApp.java
+==================
+
+@SpringBootApplication
+@EnableScheduling
+public class SpringBootApp {
+
+	public static void main(String[] args) {
+		
+		SpringApplication.run(SpringBootApp.class, args);
+	}
+	
+}
+
+-> Then Create a Entity class for Shipment Delivery Table as per consignment number data will fetch from booking table.
+
+ShipmentDelivery.java
+=====================
+
+@Entity
+@Table(name = "SHIPMENT_DELIVERY")
+public class ShipmentDelivery {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator ="delivery_sequence" )
+	@SequenceGenerator(name = "delivery_sequence", sequenceName = "SHIPMENT_DELIVERY_SEQUENCE", allocationSize = 1)
+	@Column(name = "DELIVERY_ID")
+	private int deliveryId;
+	
+	//shipment number present in Booking table
+	@Column(name = "DELIVERY_CONSG_NO")
+	private String deliveryConsgNo;
+	
+	@ManyToOne(cascade =CascadeType.ALL)
+	@JoinColumn(name="DELIVERY_PARTNER_ID")
+	private User deliveryUser;
+	
+	@Column(name = "DELIVERY_STATUS")
+	private String deliveryStatus;
+	
+	private Date dod;
+	
+	private String remarks;
+	
+	//getter and setter
+}
+
+-> do mapping for delivery_partner_id column in DTDC_USER table as per existing user tracking and do ONE-TO-MANY mapping as well.
+
+User.java
+=========
+
+@SuppressWarnings("serial")
+@Entity
+@Table(name = "DTDC_USER")
+public class User implements Serializable{
+	
+	@Id
+	@SequenceGenerator(name="SEQ_GEN_U_C",sequenceName = "SEQ_N_T_DTDC_USER",allocationSize=1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "SEQ_GEN_U_C")
+	@Column(name = "USER_ID")
+	private int userId;
+	private String name;
+	private String phone;
+	private String email;
+	private Date dob;
+	
+	@OneToMany(mappedBy = "user")
+	private Set<Address> addresses;
+	
+	@OneToOne(mappedBy = "user")
+	@Cascade(value = CascadeType.SAVE_UPDATE)
+	private Login login;
+	
+	@OneToMany(mappedBy = "user")
+	private Set<ShipmentBooking> shipmentBookings;
+	
+	@OneToMany(mappedBy = "deliveryUser")
+	private Set<ShipmentDelivery> shipmentDeliveries;
+	
+	//setter and getter
+}
+
+-> create repository class for delivery table.
+
+ShipmentDeliveryRepository.java
+===============================
+
+@Repository
+public interface ShipmentDeliveryRepository extends CrudRepository<ShipmentDelivery, Integer>{
+
+}
+
+
+-> add a select query for fetching consn_no as per scheduler daily basis inside ShipmentBookingRepository class.
+
+ShipmentBookingRepository.java
+==============================
+
+@Repository
+public interface ShipmentBookingRepository extends CrudRepository<ShipmentBooking, String>{
+
+	@Query(value = "SELECT price FROM DTDC_SERVICE s WHERE s.SOURCE=:source and s.DESTINATION=:destination",nativeQuery = true)
+	public Integer findPrice(@Param("source")String source,@Param("destination")String destination);
+	
+	@Query("FROM ShipmentBooking s WHERE s.bookingDtTime >= :now and s.bookingDtTime < :tomorrow")
+	public List<ShipmentBooking> findShipmentBookingByDate(@Param("now") Date now,@Param("tomorrow") Date tomorrow);
+}
+
+-> write a delivery service class for save booking data in to delivery table.
+
+ShipmentDeliveryService.java
+============================
+
+@Service
+public class ShipmentDeliveryService {
+
+	@Autowired
+	private ShipmentDeliveryRepository repository;
+	
+	public ShipmentDelivery saveDelivery(ShipmentDelivery delivery) {
+		
+		return repository.save(delivery);
+	}
+}
+
+-> call the method findShipmentBookingByDate to service class for list of shipmentBooking.
+
+ShipmentBookingService.java
+===========================
+
+@Service
+public class ShipmentBookingService {
+
+	@Autowired
+	private ShipmentBookingRepository repository;
+	
+	public ShipmentBooking doBookingShipment(ShipmentBooking booking) {
+		
+		ShipmentBooking shipmentBooking = repository.save(booking);
+		return shipmentBooking;
+	}
+	
+	public Integer getPriceBySourceAndDestination(String source,String destination) {
+		
+		return repository.findPrice(source, destination);
+	}
+
+	public ShipmentBooking findById(String id) {
+		
+		Optional<ShipmentBooking> optional= repository.findById(id);
+		ShipmentBooking ob=null;
+		if(optional.isPresent()) {
+			ob=optional.get();
+		}
+		
+		return ob;
+	}
+	
+	public List<ShipmentBooking> getShipmentBookingByDate(Date now,Date tomorrow){
+		
+		return repository.findShipmentBookingByDate(now, tomorrow);
+	}
+}
+
+-> write one delegate class for populating shipment booking data in to shipment delivery table.
+
+@Component
+public class PopulatePendingShipmentDeligate {
+
+	@Autowired
+	private ShipmentBookingService bookingService;
+	
+	@Autowired
+	private ShipmentDeliveryService deliveryService;
+	
+	public void doPopulateIntoDelivery(Date now,Date tomorrow) {
+		
+		List<ShipmentBooking> shipmentBookings = bookingService.getShipmentBookingByDate(now, tomorrow);
+		
+		populateInToDelivery(shipmentBookings);
+		System.out.println(shipmentBookings);
+	}
+	
+	public void populateInToDelivery(List<ShipmentBooking> array) {
+		
+		for(ShipmentBooking booking : array) {
+			
+			ShipmentDelivery delivery = new ShipmentDelivery();
+			delivery.setDeliveryConsgNo(booking.getConsg_number());//ConsignmentNumber
+			delivery.setDeliveryStatus("pending");//pending,delivered,in-process,failure
+			
+			ShipmentDelivery shipmentDelivery = deliveryService.saveDelivery(delivery);
+			System.out.println("Delivery ID : "+shipmentDelivery.getDeliveryId());
+		}
+	}
+}
+
+-> write one scheduler class for automatic populate booking data as per specified date and time inside Shipment Delivery table.
+
+ShipmentBookingScheduler.java
+=============================
+
+@Component
+public class ShipmentBookingScheduler {
+
+	@Autowired
+	private PopulatePendingShipmentDeligate deligate;
+	
+	@Scheduled(cron = "0 15 16 * * ?")
+	public void cronJobSch() {
+
+		System.out.println("I am from Sceduler");
+
+		try {
+			getTodayBooking();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	
+	private void getTodayBooking() throws ParseException {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy");
+
+		Date now = sdf.parse(sdf.format(new Date()));
+
+		String strDate = sdf.format(new Date());
+		System.out.println("NOW :: " + strDate);
+
+		Calendar c = Calendar.getInstance();
+		c.add(Calendar.DAY_OF_MONTH, 1);
+		Date tomorrow = sdf.parse(sdf.format(c.getTime()));
+		
+		String strDateTomorrow = sdf.format(tomorrow);
+		System.out.println("tomorrow :: " + strDateTomorrow);
+
+
+		deligate.doPopulateIntoDelivery(now, tomorrow);
+		
+		
+	}
+}
+
+-> Now we need to populate data in datatable format in our jsp page for getting shipment status according to shipment number , select block period and source-destination
+
+-> Create a search criteria class as per json object request.
+
+ShipmentBookingSearchCriteria.java
+==================================
+
+public class ShipmentBookingSearchCriteria {
+
+	private String shipNumber;
+	private String daterange;
+	private String source;
+	private String destination;
+	private String status;
+	
+	//getter and setter
+	//toString
+	
+}
+
+-> Crete a response class as per json object response.
+
+ShipmentBookingResponse.java
+============================
+
+public class ShipmentBookingResponse {
+
+	private String shipmentNumber;
+	private String source;
+	private String destination;
+	private String dob;
+	private String status;
+	
+	//getter and setter
+    //toString
+	
+}
+
+Part -1 (Showing shipment status as per shipment number)
+========================================================
+
+-> write a select query for getShipmentAndStatusByShipmentNumber inside ShipmentBookingRepository class.
+
+ShipmentBookingRepository.java
+==============================
+
+@Repository
+public interface ShipmentBookingRepository extends CrudRepository<ShipmentBooking, String>{
+
+	@Query(value = "SELECT price FROM DTDC_SERVICE s WHERE s.SOURCE=:source and s.DESTINATION=:destination",nativeQuery = true)
+	public Integer findPrice(@Param("source")String source,@Param("destination")String destination);
+	
+	@Query("FROM ShipmentBooking s WHERE s.bookingDtTime >= :now and s.bookingDtTime < :tomorrow")
+	public List<ShipmentBooking> findShipmentBookingByDate(@Param("now") Date now,@Param("tomorrow") Date tomorrow);
+	
+	@Query(value="select s.CONSG_NO,s.SOURCE,s.DESTINATION,s.BOOKING_DATE_TIME,d.DELIVERY_STATUS,d.REMARKS FROM SHIPMENT_BOOKING s,SHIPMENT_DELIVERY d WHERE s.CONSG_NO=:consignmentNumber and d.DELIVERY_CONSG_NO=:consignmentNumber",nativeQuery = true)
+	public List<Object[]> getShipmentAndStatusByShipmentNumber(@Param("consignmentNumber")String consignmentNumber);
+	
+}
+
+-> call getShipmentAndStatusByShipmentNumber method to service class and do some business logic.
+
+ShipmentBookingService.java
+===========================
+
+@Service
+public class ShipmentBookingService {
+
+	@Autowired
+	private ShipmentBookingRepository repository;
+	
+	public ShipmentBooking doBookingShipment(ShipmentBooking booking) {
+		
+		ShipmentBooking shipmentBooking = repository.save(booking);
+		return shipmentBooking;
+	}
+	
+	public Integer getPriceBySourceAndDestination(String source,String destination) {
+		
+		return repository.findPrice(source, destination);
+	}
+
+	public ShipmentBooking findById(String id) {
+		
+		Optional<ShipmentBooking> optional= repository.findById(id);
+		ShipmentBooking ob=null;
+		if(optional.isPresent()) {
+			ob=optional.get();
+		}
+		
+		return ob;
+	}
+	
+	public List<ShipmentBooking> getShipmentBookingByDate(Date now,Date tomorrow){
+		
+		return repository.findShipmentBookingByDate(now, tomorrow);
+	}
+	
+	public List<ShipmentStatusBO> getShipmentAndStatusByShipmentNumber(String consignmentNumber){
+		
+		List<Object[]> resultData = repository.getShipmentAndStatusByShipmentNumber(consignmentNumber);
+		
+		List<ShipmentStatusBO> shipmentStatusBOs = converObjectarrayListToShipmentStatusBoList(resultData);
+		
+		return shipmentStatusBOs;
+	}
+	
+	
+	private List<ShipmentStatusBO> converObjectarrayListToShipmentStatusBoList(List<Object[]> shipmentResultList){
+			
+			
+		//s.CONSIGNMENT_NUMBER,s.SOURCE,s.DESTINATION,s.BOOKING_DATE_TIME,d.DELIVERY_STATUS,d.REM
+		List<ShipmentStatusBO> shipmentStatusBoList=new ArrayList<ShipmentStatusBO>();
+		
+			for(Object[] arr:shipmentResultList) {
+				
+				ShipmentStatusBO bo=new ShipmentStatusBO();
+				
+				bo.setConsignmentNumber(String.valueOf(arr[0]));
+				bo.setSource(String.valueOf(arr[1]));
+				bo.setDestination(String.valueOf(arr[2]));
+				
+				Date date=converObjectToDate(arr[3]);
+				
+				bo.setDob(date);
+				
+				bo.setDeliveryStatus(String.valueOf(arr[4]));
+				
+				bo.setRemarks(String.valueOf(arr[5]));
+				
+				shipmentStatusBoList.add(bo);
+			}
+			
+			return shipmentStatusBoList;
+	}
+	
+	private Date converObjectToDate(Object date){
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+		Date convertedDate=null;
+		try {
+			convertedDate = sdf.parse(String.valueOf(date));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return convertedDate;
+	}
+}
+
+-> Create RestController class for presentation page to give response object to jsp page.
+
+ShipmentBookingAjaxController.java
+==================================
+
+@RestController
+public class ShipmentBookingAjaxController {
+	
+	@Autowired
+	private ShipmentBookingService service;
+
+	@PostMapping("/api/get-shipment-booking-details")
+	public ResponseEntity<?> getShipmentDeliveryDetails(@RequestBody ShipmentBookingSearchCriteria criteria){
+		
+		System.out.println(criteria);
+
+		String shipmentNumber = criteria.getShipNumber();
+		String dateRange = criteria.getDaterange();
+		String source = criteria.getSource();
+		String destination = criteria.getDestination();
+		String status = criteria.getStatus();
+		
+		List<ShipmentStatusBO> body = null;
+		
+		if(!shipmentNumber.isEmpty()) {
+			
+			System.out.println("From Shipment condition");
+			
+			body = service.getShipmentAndStatusByShipmentNumber(shipmentNumber);
+		
+		
+		return ResponseEntity.ok(body);
+	}
+}
+
+-> create jsp page for showing shipment status in dataTable format.
+
+dtdc-delivery-partner-dashboard.jsp
+===================================
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>DTDC - DELIVERY PARTNER</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="../resource/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+		<link href="../resource/css/cd_custom.css" rel="stylesheet" type="text/css"/>
+		<link rel="stylesheet" type="text/css" media="all" href="../resource/css/daterangepicker.css" />
+		<link href="../resource/css/datatables.min.css" rel="stylesheet" type="text/css" />
+		<link href="../resource/fonts/css/all.css" rel="stylesheet">
+		<script type="text/javascript" src="../resource/js/jquery-ui.js"></script>
+		<script type="text/javascript" src="../resource/js/jquery-3.3.1.js"></script>
+		<script type="text/javascript" src="../resource/js/moment.js"></script>
+		<script type="text/javascript" src="../resource/js/daterangepicker.js"></script>
+		<script type="text/javascript" src="../resource/js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" src="../resource/js/dataTables.bootstrap.min.js"></script>
+		<script defer src="../resource/fonts/js/all.js"></script>
+	</head>
+	<body>
+		<!----------------- Header Starts -------------------->
+		<div class="header">
+			<div class="dtdclogo">
+				WELCOME TO <br/> <span>DTDC - DELIVERY PARTNER</span>
+			</div>
+			<div class="FRPLUS"></div>
+		</div>
+		<!----------------- Header Ends -------------------->
+
+
+		<!----------------- Search Criteria Starts --------------------action="/CP-Debit/cpdebitmisresult" -->
+		<div class="panel-default container-fluid" >
+			<div class="panel-body" id="resultbody">
+				<form id="cpdebitForm">
+					<div class="form-group col-lg-2">
+						<label>Shipment Number</label> <input class="form-control"
+							type="text" name="shipNumber" id="shipNumber" />
+						
+					</div>
+					<div class="form-group col-lg-1" style="text-align: center;">
+						<img src="../resource/images/or.png" alt="" />
+					</div>
+					<div class="form-group col-lg-2">
+						<label>Select Booking  Period</label> <input class="form-control"
+							type="text" name="daterange" onclick="forDateInput()"  id="daterange" placeholder="Enter Booking Period" />
+					</div>
+					<div class="form-group col-lg-1" style="text-align: center;">
+						<img src="../resource/images/or.png" alt="" />
+					</div>
+					<div>
+						<div  class="form-group col-lg-2">
+							<label>Source</label>
+								<select name="source" id="source" class="form-control">
+										<option value="">select</option>
+										<option value="Bangalore">Bangalore</option>
+										<option value="Hyderabad">Hyderabad</option>
+										<option value="Chennai">Chennai</option>
+										<option value="Bhubaneswar">Bhubaneswar</option>
+								</select>
+						</div>
+						<div class="form-group col-lg-2">
+							<label>Destination</label>
+								<select name="destination" id="destination"  class="form-control" >
+									<option value="">select</option>
+									<option value="Bangalore">Bangalore</option>
+									<option value="Hyderabad">Hyderabad</option>
+									<option value="Chennai">Chennai</option>
+									<option value="Bhubaneswar">Bhubaneswar</option>
+								</select>
+						</div>
+					</div>
+					<div class="col-lg-2">
+						<label>Process Status</label> <select title="Select status"
+							class="form-control" name="status" id="status">
+							<option>All</option>
+							<option>pending</option>
+							<option>delivered</option>
+							<option>failure</option>
+						</select>
+					</div>
+					<div class="form-group col-lg-2" style="margin-top: 20px;">
+						<button type="submit"  id="submitButton" class="btn btn-success" >
+							<span class="fa fa-check"></span>&nbsp;Submit
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	
+		<!----------------- Search Criteria Ends -------------------->
+		
+		<!----------------- Search Result Table Starts -------------------->
+		<div  class="panel-default container-fluid">
+			<div id="table-div" class="panel-body">
+				<table id="example" class="table table-striped table-bordered"></table>
+			</div>
+			<div id="message-div" class="panel-body"></div>
+	 	</div>
+	
+		<!----------------- Search Result Table Ends -------------------->
+	</body>
+	<a href="/dtdc-logout.htm">Logout</a>	
+	<script type="text/javascript">
+		$(function() {
+				$('input[name="daterange"]').daterangepicker({
+					autoUpdateInput : false,
+					locale : {
+						cancelLabel : 'Clear'
+					}
+				});
+				$('input[name="daterange"]').on(
+						'apply.daterangepicker',
+						function(ev, picker) {
+							$(this).val(
+									picker.startDate.format('DD/MM/YY') + ' - '
+											+ picker.endDate.format('DD/MM/YY'));
+				});
+	
+				$('input[name="daterange"]').on('cancel.daterangepicker',
+					function(ev, picker) {
+						$(this).val('');
+				});
+		});
+
+
+		jQuery(document).ready(function($){
+
+			$("#shipNumber").click(function(){
+
+				$("#daterange").val("");
+			    $("#source").val("");
+			    $("#destination").val("");
+			});
+
+			$("#cpdebitForm").submit(function(event){
+
+				event.preventDefault();
+
+				var search={};
+
+				search["shipNumber"]=$("#shipNumber").val();
+				search["status"]=$("#status").val();
+
+
+				getShipmentBookingDetails(search);
+					
+			});
+
+			function getShipmentBookingDetails(searchCriteria){
+
+				var data=JSON.stringify(searchCriteria);
+				alert(data);
+
+				 $.ajax({
+			         type: "POST",
+			         contentType: "application/json",
+			         url: "/api/get-shipment-booking-details",
+			         data: JSON.stringify(searchCriteria),
+			         dataType: 'json',
+			         cache: false,
+			         timeout: 600000,
+			         success: function (result) {
+
+				         alert("Success");
+				         var stringResult=JSON.stringify(result);
+				         alert(stringResult);
+				         displayTable(result);
+			         },
+			         error: function (e) {
+
+			        	 alert("Failure");
+			         }
+			     });
+
+			}
+
+		});
+
+		
+		function displayTable(resultArr){
+
+
+			if(resultArr.length==0){
+
+				$("#message-div").html("No data found");
+				$("#message-div").show();
+				$("#table-div").hide();
+			}
+
+
+			$("#message-div").hide();
+			var isSecondHit = document.getElementById("secondHit").value;
+			if(secondHit != "Yes"){
+
+				var tableHeaderRow = "<thead><tr><th>SL No</th><th>Shipment Number</th><th>Date of booking</th><th>Source</th><th>Destination</th><th>Status</th><th>Remarks</th></tr></thead>";
+				var tableDataRow="<tbody>";
+
+					for(var i = 0; i < resultArr.length; i++){
+
+						var remarks = resultArr[i]["remarks"];
+						if(remarks === null){
+
+							remarks="";
+						}
+
+						tableDataRow=tableDataRow+"<tr><td>"+(i+1)+"</td><td><a href='/dtdc-registration.htm'>"+resultArr[i]["consignmentNumber"]+"</td><td>"+resultArr[i]["dob"]+"</td><td>"+resultArr[i]["source"]+"</td><td>"+resultArr[i]["destination"]+"</td><td>"+resultArr[i]["deliveryStatus"]+"</td><td>"+remarks+"</td></tr>"
+					}
+
+					tableDataRow=tableDataRow+"</tbody>";
+
+					var finalTable = tableHeaderRow+tableDataRow;
+
+					$("#example").html(finalTable);
+					$("#example").DataTable().search( '' ).columns().search( '' ).draw();
+					$("#table-div").show();
+				    document.getElementById("secondHit").value="Yes";
+					
+			}else{
+
+				var dataTable = $('#example').DataTable();
+				dataTable.clear();
+
+				for(var i = 0; i < resultArr.length; i++){
+
+					dataTable.row.add([ (i+1) ,
+						  "<a href='/dtdc-registration.htm'>"+resultArr[i]["consignmentNumber"]+"</a>",
+						  resultArr[i]["dob"] ,
+						  resultArr[i]["source"],
+						  resultArr[i]["destination"], 
+						  resultArr[i]["deliveryStatus"],
+						  resultArr[i]["remarks"],
+					]).search( '' ).columns().search( '' ).draw();
+					$("#table-div").show();
+				}
+
+			}
+			
+		}
+
+		window.onload = function() {
+
+
+			 $('<input>').attr({
+				    type: 'hidden',
+				    id: 'secondHit',
+				    name: 'bar',
+				    value: 'No'
+				}).appendTo('form');
+
+			 $("#message-div").hide();
+			 $("#table-div").hide();
+		}			
+	</script>
+</html>
+
+Part -2 (Showing shipment status as per select booking period)
+==============================================================
+
+-> write a select query for getShipmentAndStatusBydateRangeAndStatus and getShipmentAndStatusBydateRange(for All) inside ShipmentBookingRepository class.
+
+ShipmentBookingRepository.java
+==============================
+
+@Repository
+public interface ShipmentBookingRepository extends CrudRepository<ShipmentBooking, String>{
+
+	@Query(value = "SELECT price FROM DTDC_SERVICE s WHERE s.SOURCE=:source and s.DESTINATION=:destination",nativeQuery = true)
+	public Integer findPrice(@Param("source")String source,@Param("destination")String destination);
+	
+	@Query("FROM ShipmentBooking s WHERE s.bookingDtTime >= :now and s.bookingDtTime < :tomorrow")
+	public List<ShipmentBooking> findShipmentBookingByDate(@Param("now") Date now,@Param("tomorrow") Date tomorrow);
+	
+	@Query(value="select s.CONSG_NO,s.SOURCE,s.DESTINATION,s.BOOKING_DATE_TIME,d.DELIVERY_STATUS,d.REMARKS FROM SHIPMENT_BOOKING s,SHIPMENT_DELIVERY d WHERE s.CONSG_NO=:consignmentNumber and d.DELIVERY_CONSG_NO=:consignmentNumber",nativeQuery = true)
+	public List<Object[]> getShipmentAndStatusByShipmentNumber(@Param("consignmentNumber")String consignmentNumber);
+	
+	@Query(value="select s.CONSG_NO,s.SOURCE,s.DESTINATION,s.BOOKING_DATE_TIME,d.DELIVERY_STATUS,d.REMARKS FROM SHIPMENT_BOOKING s,SHIPMENT_DELIVERY d WHERE s.CONSG_NO=d.DELIVERY_CONSG_NO and s.BOOKING_DATE_TIME >= TO_DATE(:fromDate,'dd/MM/yy') and s.BOOKING_DATE_TIME < TO_DATE(:toDate,'dd/MM/yy') and d.DELIVERY_STATUS=:status",nativeQuery = true)
+	public List<Object[]> getShipmentAndStatusBydateRangeAndStatus(@Param("fromDate")String fromDate,@Param("toDate")String toDate,@Param("status")String status);
+	
+		
+	@Query(value="select s.CONSG_NO,s.SOURCE,s.DESTINATION,s.BOOKING_DATE_TIME,d.DELIVERY_STATUS,d.REMARKS FROM SHIPMENT_BOOKING s,SHIPMENT_DELIVERY d WHERE s.CONSG_NO=d.DELIVERY_CONSG_NO and s.BOOKING_DATE_TIME >= TO_DATE(:fromDate,'dd/MM/yy') and s.BOOKING_DATE_TIME < TO_DATE(:toDate,'dd/MM/yy')",nativeQuery = true)
+	public List<Object[]> getShipmentAndStatusBydateRange(@Param("fromDate")String fromDate,@Param("toDate")String toDate);
+	
+}
+
+-> call getShipmentAndStatusBydateRangeAndStatus and getShipmentAndStatusBydateRange method to service class and do some business logic.
+
+ShipmentBookingService.java
+===========================
+
+@Service
+public class ShipmentBookingService {
+
+	@Autowired
+	private ShipmentBookingRepository repository;
+	
+	public ShipmentBooking doBookingShipment(ShipmentBooking booking) {
+		
+		ShipmentBooking shipmentBooking = repository.save(booking);
+		return shipmentBooking;
+	}
+	
+	public Integer getPriceBySourceAndDestination(String source,String destination) {
+		
+		return repository.findPrice(source, destination);
+	}
+
+	public ShipmentBooking findById(String id) {
+		
+		Optional<ShipmentBooking> optional= repository.findById(id);
+		ShipmentBooking ob=null;
+		if(optional.isPresent()) {
+			ob=optional.get();
+		}
+		
+		return ob;
+	}
+	
+	public List<ShipmentBooking> getShipmentBookingByDate(Date now,Date tomorrow){
+		
+		return repository.findShipmentBookingByDate(now, tomorrow);
+	}
+	
+	public List<ShipmentStatusBO> getShipmentAndStatusByShipmentNumber(String consignmentNumber){
+		
+		List<Object[]> resultData = repository.getShipmentAndStatusByShipmentNumber(consignmentNumber);
+		
+		List<ShipmentStatusBO> shipmentStatusBOs = converObjectarrayListToShipmentStatusBoList(resultData);
+		
+		return shipmentStatusBOs;
+	}
+	
+	public List<ShipmentStatusBO> getShipmentAndStatusBydateRangeAndStatus(String fromDate,String toDate,String status){
+		
+		List<Object[]> resultData=null;
+		
+		if(!status.equals("All")) {
+			resultData=repository.getShipmentAndStatusBydateRangeAndStatus(fromDate, toDate, status);
+			
+		}else {
+			
+			resultData=repository.getShipmentAndStatusBydateRange(fromDate, toDate);
+			
+		}
+		
+		List<ShipmentStatusBO> shipmentStatusBoList=converObjectarrayListToShipmentStatusBoList(resultData);
+		
+		
+				
+		System.out.println(shipmentStatusBoList);
+		return shipmentStatusBoList;
+	}
+	
+	
+	private List<ShipmentStatusBO> converObjectarrayListToShipmentStatusBoList(List<Object[]> shipmentResultList){
+			
+			
+		//s.CONSIGNMENT_NUMBER,s.SOURCE,s.DESTINATION,s.BOOKING_DATE_TIME,d.DELIVERY_STATUS,d.REM
+		List<ShipmentStatusBO> shipmentStatusBoList=new ArrayList<ShipmentStatusBO>();
+		
+			for(Object[] arr:shipmentResultList) {
+				
+				ShipmentStatusBO bo=new ShipmentStatusBO();
+				
+				bo.setConsignmentNumber(String.valueOf(arr[0]));
+				bo.setSource(String.valueOf(arr[1]));
+				bo.setDestination(String.valueOf(arr[2]));
+				
+				Date date=converObjectToDate(arr[3]);
+				
+				bo.setDob(date);
+				
+				bo.setDeliveryStatus(String.valueOf(arr[4]));
+				
+				bo.setRemarks(String.valueOf(arr[5]));
+				
+				shipmentStatusBoList.add(bo);
+			}
+			
+			return shipmentStatusBoList;
+	}
+	
+	private Date converObjectToDate(Object date){
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+		Date convertedDate=null;;
+		try {
+			convertedDate = sdf.parse(String.valueOf(date));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return convertedDate;
+	}
+}
+
+-> Create RestController class for presentation page to give response object to jsp page.
+
+ShipmentBookingAjaxController.java
+==================================
+
+package com.dtdc.cd.ajax;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.dtdc.cd.bo.ShipmentStatusBO;
+import com.dtdc.cd.service.ShipmentBookingService;
+
+@RestController
+public class ShipmentBookingAjaxController {
+	
+	@Autowired
+	private ShipmentBookingService service;
+
+	@PostMapping("/api/get-shipment-booking-details")
+	public ResponseEntity<?> getShipmentDeliveryDetails(@RequestBody ShipmentBookingSearchCriteria criteria){
+		
+		System.out.println(criteria);
+		
+		String shipmentNumber = criteria.getShipNumber();
+		String dateRange = criteria.getDaterange();
+		String source = criteria.getSource();
+		String destination = criteria.getDestination();
+		String status = criteria.getStatus();
+		
+		List<ShipmentStatusBO> body = null;
+		
+		if(!shipmentNumber.isEmpty()) {
+			
+			System.out.println("From Shipment condition");
+			
+			body = service.getShipmentAndStatusByShipmentNumber(shipmentNumber);
+			
+		}else if(!dateRange.isEmpty()) {
+			
+			System.out.println("From dateRange condition");
+			
+			String[] dateArray=dateRange.split("-");//convertDateFromString(dateRange);
+			
+				String fromDate = dateArray[0].trim();
+				String toDate = dateArray[1].trim();
+
+				body = service.getShipmentAndStatusBydateRangeAndStatus(fromDate, toDate, status);
+		
+		return ResponseEntity.ok(body);
+	}
+}
+
+-> create jsp page for showing shipment status in dataTable format.
+
+dtdc-delivery-partner-dashboard.jsp
+===================================
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>DTDC - DELIVERY PARTNER</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="../resource/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+		<link href="../resource/css/cd_custom.css" rel="stylesheet" type="text/css"/>
+		<link rel="stylesheet" type="text/css" media="all" href="../resource/css/daterangepicker.css" />
+		<link href="../resource/css/datatables.min.css" rel="stylesheet" type="text/css" />
+		<link href="../resource/fonts/css/all.css" rel="stylesheet">
+		<script type="text/javascript" src="../resource/js/jquery-ui.js"></script>
+		<script type="text/javascript" src="../resource/js/jquery-3.3.1.js"></script>
+		<script type="text/javascript" src="../resource/js/moment.js"></script>
+		<script type="text/javascript" src="../resource/js/daterangepicker.js"></script>
+		<script type="text/javascript" src="../resource/js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" src="../resource/js/dataTables.bootstrap.min.js"></script>
+		<script defer src="../resource/fonts/js/all.js"></script>
+	</head>
+	<body>
+		<!----------------- Header Starts -------------------->
+		<div class="header">
+			<div class="dtdclogo">
+				WELCOME TO <br/> <span>DTDC - DELIVERY PARTNER</span>
+			</div>
+			<div class="FRPLUS"></div>
+		</div>
+		<!----------------- Header Ends -------------------->
+
+
+		<!----------------- Search Criteria Starts --------------------action="/CP-Debit/cpdebitmisresult" -->
+		<div class="panel-default container-fluid" >
+			<div class="panel-body" id="resultbody">
+				<form id="cpdebitForm">
+					<div class="form-group col-lg-2">
+						<label>Shipment Number</label> <input class="form-control"
+							type="text" name="shipNumber" id="shipNumber" />
+						
+					</div>
+					<div class="form-group col-lg-1" style="text-align: center;">
+						<img src="../resource/images/or.png" alt="" />
+					</div>
+					<div class="form-group col-lg-2">
+						<label>Select Booking  Period</label> <input class="form-control"
+							type="text" name="daterange" onclick="forDateInput()"  id="daterange" placeholder="Enter Booking Period" />
+					</div>
+					<div class="form-group col-lg-1" style="text-align: center;">
+						<img src="../resource/images/or.png" alt="" />
+					</div>
+					<div>
+						<div  class="form-group col-lg-2">
+							<label>Source</label> <!-- <input class="form-control"
+								type="text" name="source" id="source" /> -->
+								<select name="source" id="source" class="form-control">
+										<option value="">select</option>
+										<option value="Bangalore">Bangalore</option>
+										<option value="Hyderabad">Hyderabad</option>
+										<option value="Chennai">Chennai</option>
+										<option value="Bhubaneswar">Bhubaneswar</option>
+								</select>
+						</div>
+						<div class="form-group col-lg-2">
+							<label>Destination</label> <!-- <input class="form-control"
+								type="text" name="destination" id="destination" /> -->
+								<select name="destination" id="destination"  class="form-control" >
+									<option value="">select</option>
+									<option value="Bangalore">Bangalore</option>
+									<option value="Hyderabad">Hyderabad</option>
+									<option value="Chennai">Chennai</option>
+									<option value="Bhubaneswar">Bhubaneswar</option>
+								</select>
+						</div>
+					</div>
+					<div class="col-lg-2">
+						<label>Process Status</label> <select title="Select status"
+							class="form-control" name="status" id="status">
+							<option>All</option>
+							<option>pending</option>
+							<option>delivered</option>
+							<option>failure</option>
+						</select>
+					</div>
+					<div class="form-group col-lg-2" style="margin-top: 20px;">
+						<button type="submit"  id="submitButton" class="btn btn-success" >
+							<span class="fa fa-check"></span>&nbsp;Submit
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	
+		<!----------------- Search Criteria Ends -------------------->
+		
+		<!----------------- Search Result Table Starts -------------------->
+		<div  class="panel-default container-fluid">
+			<div id="table-div" class="panel-body">
+				<table id="example" class="table table-striped table-bordered"></table>
+			</div>
+			<div id="message-div" class="panel-body"></div>
+	 	</div>
+	
+		<!----------------- Search Result Table Ends -------------------->
+	</body>
+	<a href="/dtdc-logout.htm">Logout</a>	
+	<script type="text/javascript">
+		$(function() {
+				$('input[name="daterange"]').daterangepicker({
+					autoUpdateInput : false,
+					locale : {
+						cancelLabel : 'Clear'
+					}
+				});
+				$('input[name="daterange"]').on(
+						'apply.daterangepicker',
+						function(ev, picker) {
+							$(this).val(
+									picker.startDate.format('DD/MM/YY') + ' - '
+											+ picker.endDate.format('DD/MM/YY'));
+				});
+	
+				$('input[name="daterange"]').on('cancel.daterangepicker',
+					function(ev, picker) {
+						$(this).val('');
+				});
+		});
+
+
+		jQuery(document).ready(function($){
+
+
+			$("#daterange").click(function(){
+				
+			   $("#shipNumber").val("");
+			   $("#source").val("");
+			   $("#destination").val("");
+			});
+
+			$("#cpdebitForm").submit(function(event){
+
+				event.preventDefault();
+
+				var search={};
+
+				search["daterange"]=$("#daterange").val();
+				search["status"]=$("#status").val();
+
+
+				getShipmentBookingDetails(search);
+					
+			});
+
+			function getShipmentBookingDetails(searchCriteria){
+
+				var data=JSON.stringify(searchCriteria);
+				alert(data);
+
+				 $.ajax({
+			         type: "POST",
+			         contentType: "application/json",
+			         url: "/api/get-shipment-booking-details",
+			         data: JSON.stringify(searchCriteria),
+			         dataType: 'json',
+			         cache: false,
+			         timeout: 600000,
+			         success: function (result) {
+
+				         alert("Success");
+				         var stingResult=JSON.stringify(result);
+				         console.log(stingResult);
+				         alert(stingResult);
+				         displayTable(result);
+			         },
+			         error: function (e) {
+
+			        	 alert("Failure");
+			         }
+			     });
+
+			}
+
+		});
+
+		
+		function displayTable(resultArr){
+
+
+			if(resultArr.length==0){
+
+				$("#message-div").html("No data found");
+				$("#message-div").show();
+				$("#table-div").hide();
+			}
+
+
+			$("#message-div").hide();
+			var isSecondHit = document.getElementById("secondHit").value;
+			if(secondHit != "Yes"){
+
+				var tableHeaderRow = "<thead><tr><th>SL No</th><th>Shipment Number</th><th>Date of booking</th><th>Source</th><th>Destination</th><th>Status</th><th>Remarks</th></tr></thead>";
+				var tableDataRow="<tbody>";
+
+					for(var i = 0; i < resultArr.length; i++){
+
+						var remarks = resultArr[i]["remarks"];
+						if(remarks === null){
+
+							remarks="";
+						}
+
+						tableDataRow=tableDataRow+"<tr><td>"+(i+1)+"</td><td><a href='/dtdc-registration.htm'>"+resultArr[i]["consignmentNumber"]+"</td><td>"+resultArr[i]["dob"]+"</td><td>"+resultArr[i]["source"]+"</td><td>"+resultArr[i]["destination"]+"</td><td>"+resultArr[i]["deliveryStatus"]+"</td><td>"+remarks+"</td></tr>"
+					}
+
+					tableDataRow=tableDataRow+"</tbody>";
+
+					var finalTable = tableHeaderRow+tableDataRow;
+
+					$("#example").html(finalTable);
+					$("#example").DataTable().search( '' ).columns().search( '' ).draw();
+					$("#table-div").show();
+				    document.getElementById("secondHit").value="Yes";
+					
+			}else{
+
+				var dataTable = $('#example').DataTable();
+				dataTable.clear();
+
+				for(var i = 0; i < resultArr.length; i++){
+
+					dataTable.row.add([ (i+1) ,
+						  "<a href='/dtdc-registration.htm'>"+resultArr[i]["consignmentNumber"]+"</a>",
+						  resultArr[i]["dob"] ,
+						  resultArr[i]["source"],
+						  resultArr[i]["destination"], 
+						  resultArr[i]["deliveryStatus"],
+						  resultArr[i]["remarks"],
+					]).search( '' ).columns().search( '' ).draw();
+					$("#table-div").show();
+				}
+
+			}
+			
+		}
+
+		window.onload = function() {
+
+
+			 $('<input>').attr({
+				    type: 'hidden',
+				    id: 'secondHit',
+				    name: 'bar',
+				    value: 'No'
+				}).appendTo('form');
+
+			 $("#message-div").hide();
+			 $("#table-div").hide();
+		}			
+	</script>
+</html>
+
+Part -3 (Showing shipment status as per select source and destination)
+======================================================================
+
+-> write a select query for getShipmentAndStatusBySourceAndDestAndStatus and getShipmentAndStatusBySourceAndDest(for All) inside ShipmentBookingRepository class.
+
+ShipmentBookingRepository.java
+==============================
+
+@Repository
+public interface ShipmentBookingRepository extends CrudRepository<ShipmentBooking, String>{
+
+	@Query(value = "SELECT price FROM DTDC_SERVICE s WHERE s.SOURCE=:source and s.DESTINATION=:destination",nativeQuery = true)
+	public Integer findPrice(@Param("source")String source,@Param("destination")String destination);
+	
+	@Query("FROM ShipmentBooking s WHERE s.bookingDtTime >= :now and s.bookingDtTime < :tomorrow")
+	public List<ShipmentBooking> findShipmentBookingByDate(@Param("now") Date now,@Param("tomorrow") Date tomorrow);
+	
+	@Query(value="select s.CONSG_NO,s.SOURCE,s.DESTINATION,s.BOOKING_DATE_TIME,d.DELIVERY_STATUS,d.REMARKS FROM SHIPMENT_BOOKING s,SHIPMENT_DELIVERY d WHERE s.CONSG_NO=:consignmentNumber and d.DELIVERY_CONSG_NO=:consignmentNumber",nativeQuery = true)
+	public List<Object[]> getShipmentAndStatusByShipmentNumber(@Param("consignmentNumber")String consignmentNumber);
+	
+	@Query(value="select s.CONSG_NO,s.SOURCE,s.DESTINATION,s.BOOKING_DATE_TIME,d.DELIVERY_STATUS,d.REMARKS FROM SHIPMENT_BOOKING s,SHIPMENT_DELIVERY d WHERE s.CONSG_NO=d.DELIVERY_CONSG_NO and s.BOOKING_DATE_TIME >= TO_DATE(:fromDate,'dd/MM/yy') and s.BOOKING_DATE_TIME < TO_DATE(:toDate,'dd/MM/yy') and d.DELIVERY_STATUS=:status",nativeQuery = true)
+	public List<Object[]> getShipmentAndStatusBydateRangeAndStatus(@Param("fromDate")String fromDate,@Param("toDate")String toDate,@Param("status")String status);
+	
+		
+	@Query(value="select s.CONSG_NO,s.SOURCE,s.DESTINATION,s.BOOKING_DATE_TIME,d.DELIVERY_STATUS,d.REMARKS FROM SHIPMENT_BOOKING s,SHIPMENT_DELIVERY d WHERE s.CONSG_NO=d.DELIVERY_CONSG_NO and s.BOOKING_DATE_TIME >= TO_DATE(:fromDate,'dd/MM/yy') and s.BOOKING_DATE_TIME < TO_DATE(:toDate,'dd/MM/yy')",nativeQuery = true)
+	public List<Object[]> getShipmentAndStatusBydateRange(@Param("fromDate")String fromDate,@Param("toDate")String toDate);
+	
+	
+	@Query(value="select s.CONSG_NO,s.SOURCE,s.DESTINATION,s.BOOKING_DATE_TIME,d.DELIVERY_STATUS,d.REMARKS FROM SHIPMENT_BOOKING s,SHIPMENT_DELIVERY d WHERE s.CONSG_NO=d.DELIVERY_CONSG_NO and s.SOURCE=:source and s.DESTINATION=:destination and d.DELIVERY_STATUS=:status",nativeQuery = true)
+	public List<Object[]> getShipmentAndStatusBySourceAndDestAndStatus(@Param("source")String source,@Param("destination")String destination,@Param("status")String status);
+	
+	@Query(value="select s.CONSG_NO,s.SOURCE,s.DESTINATION,s.BOOKING_DATE_TIME,d.DELIVERY_STATUS,d.REMARKS FROM SHIPMENT_BOOKING s,SHIPMENT_DELIVERY d WHERE s.CONSG_NO=d.DELIVERY_CONSG_NO and s.SOURCE=:source and s.DESTINATION=:destination",nativeQuery = true)
+	public List<Object[]> getShipmentAndStatusBySourceAndDest(@Param("source")String source,@Param("destination")String destination);
+	
+}
+
+-> call getShipmentAndStatusBySourceAndDestAndStatus and getShipmentAndStatusBySourceAndDest method to service class and do some business logic.
+
+ShipmentBookingService.java
+===========================
+
+@Service
+public class ShipmentBookingService {
+
+	@Autowired
+	private ShipmentBookingRepository repository;
+	
+	public ShipmentBooking doBookingShipment(ShipmentBooking booking) {
+		
+		ShipmentBooking shipmentBooking = repository.save(booking);
+		return shipmentBooking;
+	}
+	
+	public Integer getPriceBySourceAndDestination(String source,String destination) {
+		
+		return repository.findPrice(source, destination);
+	}
+
+	public ShipmentBooking findById(String id) {
+		
+		Optional<ShipmentBooking> optional= repository.findById(id);
+		ShipmentBooking ob=null;
+		if(optional.isPresent()) {
+			ob=optional.get();
+		}
+		
+		return ob;
+	}
+	
+	public List<ShipmentBooking> getShipmentBookingByDate(Date now,Date tomorrow){
+		
+		return repository.findShipmentBookingByDate(now, tomorrow);
+	}
+	
+	public List<ShipmentStatusBO> getShipmentAndStatusByShipmentNumber(String consignmentNumber){
+		
+		List<Object[]> resultData = repository.getShipmentAndStatusByShipmentNumber(consignmentNumber);
+		
+		List<ShipmentStatusBO> shipmentStatusBOs = converObjectarrayListToShipmentStatusBoList(resultData);
+		
+		return shipmentStatusBOs;
+	}
+	
+	public List<ShipmentStatusBO> getShipmentAndStatusBydateRangeAndStatus(String fromDate,String toDate,String status){
+		
+		List<Object[]> resultData=null;
+		
+		if(!status.equals("All")) {
+			resultData=repository.getShipmentAndStatusBydateRangeAndStatus(fromDate, toDate, status);
+			
+		}else {
+			
+			resultData=repository.getShipmentAndStatusBydateRange(fromDate, toDate);
+			
+		}
+		
+		List<ShipmentStatusBO> shipmentStatusBoList=converObjectarrayListToShipmentStatusBoList(resultData);
+		
+		
+				
+		System.out.println(shipmentStatusBoList);
+		return shipmentStatusBoList;
+	}
+	
+	public List<ShipmentStatusBO> getShipmentAndStatusBySourceAndDest(String source,String destination,String status){
+		
+		List<Object[]> resultData=null;
+		
+		if(!status.equals("All")) {
+			
+			resultData = repository.getShipmentAndStatusBySourceAndDestAndStatus(source, destination, status);
+			
+		}else {
+			
+			resultData = repository.getShipmentAndStatusBySourceAndDest(source, destination);
+		}
+		
+		 
+		
+		List<ShipmentStatusBO> shipmentStatusBOs = converObjectarrayListToShipmentStatusBoList(resultData);
+		
+		return shipmentStatusBOs;
+	}
+	
+	
+	private List<ShipmentStatusBO> converObjectarrayListToShipmentStatusBoList(List<Object[]> shipmentResultList){
+			
+			
+		//s.CONSIGNMENT_NUMBER,s.SOURCE,s.DESTINATION,s.BOOKING_DATE_TIME,d.DELIVERY_STATUS,d.REM
+		List<ShipmentStatusBO> shipmentStatusBoList=new ArrayList<ShipmentStatusBO>();
+		
+			for(Object[] arr:shipmentResultList) {
+				
+				ShipmentStatusBO bo=new ShipmentStatusBO();
+				
+				bo.setConsignmentNumber(String.valueOf(arr[0]));
+				bo.setSource(String.valueOf(arr[1]));
+				bo.setDestination(String.valueOf(arr[2]));
+				
+				Date date=converObjectToDate(arr[3]);
+				
+				bo.setDob(date);
+				
+				bo.setDeliveryStatus(String.valueOf(arr[4]));
+				
+				bo.setRemarks(String.valueOf(arr[5]));
+				
+				shipmentStatusBoList.add(bo);
+			}
+			
+			return shipmentStatusBoList;
+	}
+	
+	private Date converObjectToDate(Object date){
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+		Date convertedDate=null;;
+		try {
+			convertedDate = sdf.parse(String.valueOf(date));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return convertedDate;
+	}
+}
+
+-> Create RestController class for presentation page to give response object to jsp page.
+
+ShipmentBookingAjaxController.java
+==================================
+
+@RestController
+public class ShipmentBookingAjaxController {
+	
+	@Autowired
+	private ShipmentBookingService service;
+
+	@PostMapping("/api/get-shipment-booking-details")
+	public ResponseEntity<?> getShipmentDeliveryDetails(@RequestBody ShipmentBookingSearchCriteria criteria){
+		
+		System.out.println(criteria);
+		
+		String shipmentNumber = criteria.getShipNumber();
+		String dateRange = criteria.getDaterange();
+		String source = criteria.getSource();
+		String destination = criteria.getDestination();
+		String status = criteria.getStatus();
+		
+		List<ShipmentStatusBO> body = null;
+		
+		if(!shipmentNumber.isEmpty()) {
+			
+			System.out.println("From Shipment condition");
+			
+			body = service.getShipmentAndStatusByShipmentNumber(shipmentNumber);
+			
+		}else if(!dateRange.isEmpty()) {
+			
+			System.out.println("From dateRange condition");
+			
+			String[] dateArray=dateRange.split("-");//convertDateFromString(dateRange);
+			
+				String fromDate = dateArray[0].trim();
+				String toDate = dateArray[1].trim();
+
+				body = service.getShipmentAndStatusBydateRangeAndStatus(fromDate, toDate, status);
+				
+		}else if(!source.isEmpty() && !destination.isEmpty()) {
+			
+			System.out.println("From source and destination condition");
+			body = service.getShipmentAndStatusBySourceAndDest(source, destination,status);
+		}
+		
+		
+		return ResponseEntity.ok(body);
+	}
+}
+
+-> create jsp page for showing shipment status in dataTable format.
+
+dtdc-delivery-partner-dashboard.jsp
+===================================
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>DTDC - DELIVERY PARTNER</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="../resource/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+		<link href="../resource/css/cd_custom.css" rel="stylesheet" type="text/css"/>
+		<link rel="stylesheet" type="text/css" media="all" href="../resource/css/daterangepicker.css" />
+		<link href="../resource/css/datatables.min.css" rel="stylesheet" type="text/css" />
+		<link href="../resource/fonts/css/all.css" rel="stylesheet">
+		<script type="text/javascript" src="../resource/js/jquery-ui.js"></script>
+		<script type="text/javascript" src="../resource/js/jquery-3.3.1.js"></script>
+		<script type="text/javascript" src="../resource/js/moment.js"></script>
+		<script type="text/javascript" src="../resource/js/daterangepicker.js"></script>
+		<script type="text/javascript" src="../resource/js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" src="../resource/js/dataTables.bootstrap.min.js"></script>
+		<script defer src="../resource/fonts/js/all.js"></script>
+	</head>
+	<body>
+		<!----------------- Header Starts -------------------->
+		<div class="header">
+			<div class="dtdclogo">
+				WELCOME TO <br/> <span>DTDC - DELIVERY PARTNER</span>
+			</div>
+			<div class="FRPLUS"></div>
+		</div>
+		<!----------------- Header Ends -------------------->
+
+
+		<!----------------- Search Criteria Starts --------------------action="/CP-Debit/cpdebitmisresult" -->
+		<div class="panel-default container-fluid" >
+			<div class="panel-body" id="resultbody">
+				<form id="cpdebitForm">
+					<div class="form-group col-lg-2">
+						<label>Shipment Number</label> <input class="form-control"
+							type="text" name="shipNumber" id="shipNumber" />
+						
+					</div>
+					<div class="form-group col-lg-1" style="text-align: center;">
+						<img src="../resource/images/or.png" alt="" />
+					</div>
+					<div class="form-group col-lg-2">
+						<label>Select Booking  Period</label> <input class="form-control"
+							type="text" name="daterange" onclick="forDateInput()" id="daterange" placeholder="Enter Booking Period" />
+					</div>
+					<div class="form-group col-lg-1" style="text-align: center;">
+						<img src="../resource/images/or.png" alt="" />
+					</div>
+					<div>
+						<div  class="form-group col-lg-2">
+							<label>Source</label>
+								<select name="source" id="source" class="form-control">
+										<option value="">select</option>
+										<option value="Bangalore">Bangalore</option>
+										<option value="Hyderabad">Hyderabad</option>
+										<option value="Chennai">Chennai</option>
+										<option value="Bhubaneswar">Bhubaneswar</option>
+								</select>
+						</div>
+						<div class="form-group col-lg-2">
+							<label>Destination</label>
+								<select name="destination" id="destination"  class="form-control" >
+									<option value="">select</option>
+									<option value="Bangalore">Bangalore</option>
+									<option value="Hyderabad">Hyderabad</option>
+									<option value="Chennai">Chennai</option>
+									<option value="Bhubaneswar">Bhubaneswar</option>
+								</select>
+						</div>
+					</div>
+					<div class="col-lg-2">
+						<label>Process Status</label> <select title="Select status"
+							class="form-control" name="status" id="status">
+							<option>All</option>
+							<option>pending</option>
+							<option>delivered</option>
+							<option>failure</option>
+						</select>
+					</div>
+					<div class="form-group col-lg-2" style="margin-top: 20px;">
+						<button type="submit"  id="submitButton" class="btn btn-success" >
+							<span class="fa fa-check"></span>&nbsp;Submit
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	
+		<!----------------- Search Criteria Ends -------------------->
+		
+		<!----------------- Search Result Table Starts -------------------->
+		<div  class="panel-default container-fluid">
+			<div id="table-div" class="panel-body">
+				<table id="example" class="table table-striped table-bordered"></table>
+			</div>
+			<div id="message-div" class="panel-body"></div>
+	 	</div>
+	
+		<!----------------- Search Result Table Ends -------------------->
+	</body>
+	<a href="/dtdc-logout.htm">Logout</a>	
+	<script type="text/javascript">
+		$(function() {
+				$('input[name="daterange"]').daterangepicker({
+					autoUpdateInput : false,
+					locale : {
+						cancelLabel : 'Clear'
+					}
+				});
+				$('input[name="daterange"]').on(
+						'apply.daterangepicker',
+						function(ev, picker) {
+							$(this).val(
+									picker.startDate.format('DD/MM/YY') + ' - '
+											+ picker.endDate.format('DD/MM/YY'));
+				});
+	
+				$('input[name="daterange"]').on('cancel.daterangepicker',
+					function(ev, picker) {
+						$(this).val('');
+				});
+		});
+
+
+		jQuery(document).ready(function($){
+
+			$("#shipNumber").click(function(){
+
+				$("#daterange").val("");
+			    $("#source").val("");
+			    $("#destination").val("");
+			});
+
+			$("#daterange").click(function(){
+				
+			   $("#shipNumber").val("");
+			   $("#source").val("");
+			   $("#destination").val("");
+			});
+
+			$("#source").change(function(){
+				//enableSearchButton(false);
+				  $("#daterange").val("");
+				  $("#shipNumber").val("");
+
+				  var source=$("#source").val();
+
+				  var destination=$("#destination").val();
+
+				  if(source==destination){
+					alert("From source and destination city should not be same");
+					$("#source").val(0);
+					$("#destination").val(0) ;
+					return;
+				 }
+			});
+
+			$("#destination").change(function(){
+				//enableSearchButton(false);
+				  $("#daterange").val("");
+				  $("#shipNumber").val("");
+	
+			      var source=$("#source").val();
+	
+				  var destination=$("#destination").val();
+	
+				  if(source==destination){
+					alert("From source and destination city should not be same");
+					$("#source").val(0);
+					$("#destination").val(0) ;
+					return;
+				 }
+		  	});
+
+			$("#cpdebitForm").submit(function(event){
+
+				event.preventDefault();
+
+				var search={};
+
+				search["shipNumber"]=$("#shipNumber").val();
+				search["daterange"]=$("#daterange").val();
+				search["source"]=$("#source").val();
+				search["destination"]=$("#destination").val();
+				search["status"]=$("#status").val();
+
+
+				getShipmentBookingDetails(search);
+					
+			});
+
+			function getShipmentBookingDetails(searchCriteria){
+
+				var data=JSON.stringify(searchCriteria);
+				alert(data);
+
+				 $.ajax({
+			         type: "POST",
+			         contentType: "application/json",
+			         url: "/api/get-shipment-booking-details",
+			         data: JSON.stringify(searchCriteria),
+			         dataType: 'json',
+			         cache: false,
+			         timeout: 600000,
+			         success: function (result) {
+
+				         alert("Success");
+				         var stingResult=JSON.stringify(result);
+				         alert(stingResult);
+				         displayTable(result);
+			         },
+			         error: function (e) {
+
+			        	 alert("Failure");
+			         }
+			     });
+
+			}
+
+		});
+
+		
+		function displayTable(resultArr){
+
+
+			if(resultArr.length==0){
+
+				$("#message-div").html("No data found");
+				$("#message-div").show();
+				$("#table-div").hide();
+			}
+
+
+			$("#message-div").hide();
+			var isSecondHit = document.getElementById("secondHit").value;
+			if(secondHit != "Yes"){
+
+				var tableHeaderRow = "<thead><tr><th>SL No</th><th>Shipment Number</th><th>Date of booking</th><th>Source</th><th>Destination</th><th>Status</th><th>Remarks</th></tr></thead>";
+				var tableDataRow="<tbody>";
+
+					for(var i = 0; i < resultArr.length; i++){
+
+						var remarks = resultArr[i]["remarks"];
+						if(remarks === null){
+
+							remarks="";
+						}
+
+						tableDataRow=tableDataRow+"<tr><td>"+(i+1)+"</td><td><a href='#'>"+resultArr[i]["consignmentNumber"]+"</td><td>"+resultArr[i]["dob"]+"</td><td>"+resultArr[i]["source"]+"</td><td>"+resultArr[i]["destination"]+"</td><td>"+resultArr[i]["deliveryStatus"]+"</td><td>"+remarks+"</td></tr>"
+					}
+
+					tableDataRow=tableDataRow+"</tbody>";
+
+					var finalTable = tableHeaderRow+tableDataRow;
+
+					$("#example").html(finalTable);
+					$("#example").DataTable().search( '' ).columns().search( '' ).draw();
+					$("#table-div").show();
+				    document.getElementById("secondHit").value="Yes";
+					
+			}else{
+
+				var dataTable = $('#example').DataTable();
+				dataTable.clear();
+
+				for(var i = 0; i < resultArr.length; i++){
+
+					dataTable.row.add([ (i+1) ,
+						  "<a href='#'>"+resultArr[i]["consignmentNumber"]+"</a>",
+						  resultArr[i]["dob"] ,
+						  resultArr[i]["source"],
+						  resultArr[i]["destination"], 
+						  resultArr[i]["deliveryStatus"],
+						  resultArr[i]["remarks"],
+					]).search( '' ).columns().search( '' ).draw();
+					$("#table-div").show();
+				}
+
+			}
+			
+		}
+
+		window.onload = function() {
+
+
+			 $('<input>').attr({
+				    type: 'hidden',
+				    id: 'secondHit',
+				    name: 'bar',
+				    value: 'No'
+				}).appendTo('form');
+
+			 $("#message-div").hide();
+			 $("#table-div").hide();
+		}			
+	</script>
+</html>
+
+
+Project Step - 5.1 : (Channel Partner - Specific Shipment Details Showing By ConsignmentNumber)
+===============================================================================================
+
+-> Add Hyperlink above consignmentNumber for showing consignment details.
+
+dtdc-delivery-partner-dashboard.jsp
+===================================
+
+tableDataRow=tableDataRow+"<tr><td>"+(i+1)+"</td><td><a href='#'>"+resultArr[i]["consignmentNumber"]+"</td><td>"+resultArr[i]["dob"]+"</td><td>"+
+
+dataTable.row.add([(i+1),"<a href='#'>"+resultArr[i]["consignmentNumber"]+"</a>",
+						  resultArr[i]["dob"] ,
+
+-> Write Query inside IndivisualShipmentDetailsRepository for fetching partial data from Booking Table, Customer Table, Booking Customer Address Table and Delivery Table. So need to use inner join.
+
+IndivisualShipmentDetailsRepository.java
+========================================
+
+@Repository
+public interface IndivisualShipmentDetailsRepository extends CrudRepository<ShipmentBooking, String>{
+
+	@Query(value="SELECT sb.CONSG_NO,dcb.NAME,dcb.PHONE,sb.VAS_PROD_CODE,sb.BOOKING_PRICE,sb.ITEM_WEIGHT,sb.BOOKING_DATE_TIME,sb.BOOKING_PARCEL_TYPE,sb.QUANTITY,sd.DELIVERY_STATUS,cba.A_LINE1,cba.A_LINE2,cba.CITY,cba.STATE,cba.COUNTRY,cba.ZIP,cba.ADDRESS_TYPE FROM SHIPMENT_BOOKING sb INNER JOIN DTDC_CUSTOMER_BOOKING dcb ON sb.CUST_BOOK_ID=dcb.CUST_BOOK_ID and sb.CONSG_NO=:consignmentnumber INNER JOIN CUSTOMER_BOOKING_ADDRESS cba ON cba.CUST_BOOK_ID=sb.CUST_BOOK_ID INNER JOIN SHIPMENT_DELIVERY sd ON sd.DELIVERY_CONSG_NO=sb.CONSG_NO",nativeQuery = true)
+	public List<Object[]> getIndivisualShipmentDetails(@Param("consignmentnumber")String consignmentnumber);
+	
+}
+
+-> Write business to sagregate shipment data inside IndivisualShipmentDetailsService class.
+
+-> So need to write IndivisualShipmentAddressBO class for address Details.
+
+IndivisualShipmentAddressBO.java
+================================
+
+public class IndivisualShipmentAddressBO {
+
+	private String addressLine1;
+	private String addressLine2;
+	private String city;
+	private String state;
+	private String country;
+	private int zip;
+	
+	//getter and setter
+	//toString
+	
+}
+
+-> write one more BO class shipment details and inject IndivisualShipmentAddressBO class for fromAddress and toAddress.
+
+
+public class IndivisualShipmentDetailsBO {
+
+	private String consignmentNo;
+	private String name;
+	private String phone;
+	private String vasProdCode;
+	private int bookingPrice;
+	private float itemWeight;
+	private Date bookingDtTime;
+	private String bookingParcelType;
+	private int quantity;
+	private String deliveryStatus;
+	private IndivisualShipmentAddressBO fromAddress;
+	private IndivisualShipmentAddressBO toAddress;
+	
+	//getter and setter
+	//toString
+		
+}
+
+IndivisualShipmentDetailsService.java
+=====================================
+
+@Service
+public class IndivisualShipmentDetailsService {
+
+	@Autowired
+	private IndivisualShipmentDetailsRepository repository;
+	
+	public IndivisualShipmentDetailsBO getIndivisualShipmentDetails(String consignmentnumber) {
+		
+			
+		List<Object[]> shipmentDataList = repository.getIndivisualShipmentDetails(consignmentnumber);
+		
+		return prepareIndivisualShipmentDetailsBO(shipmentDataList);
+			
+		
+	}
+	
+	private IndivisualShipmentDetailsBO prepareIndivisualShipmentDetailsBO(List<Object[]> list) {
+		
+		IndivisualShipmentDetailsBO result = new IndivisualShipmentDetailsBO();
+		
+		for(int i=0;i<list.size();i++) {
+			
+			Object[] arr = list.get(i);
+			
+			if(i==0) {
+				
+				result.setConsignmentNo(String.valueOf(arr[0]));
+				result.setName(String.valueOf(arr[1]));
+				result.setPhone(String.valueOf(arr[2]));
+				result.setVasProdCode(String.valueOf(arr[3]));
+				
+				String bookingPrice = String.valueOf(arr[4]);
+				result.setBookingPrice(Integer.valueOf(bookingPrice));
+				
+				String itemWeight = String.valueOf(arr[5]);
+				result.setItemWeight(Float.valueOf(itemWeight));
+				
+				Date date=converObjectToDate(arr[6]);
+				result.setBookingDtTime(date);
+				result.setBookingParcelType(String.valueOf(arr[7]));
+				
+				String quantity = String.valueOf(arr[8]);
+				result.setQuantity(Integer.valueOf(quantity));
+				result.setDeliveryStatus(String.valueOf(arr[9]));
+			}
+			
+			IndivisualShipmentAddressBO addressBO = new IndivisualShipmentAddressBO();
+			
+			addressBO.setAddressLine1(String.valueOf(arr[10]));
+			addressBO.setAddressLine2(String.valueOf(arr[11]));
+			addressBO.setCity(String.valueOf(arr[12]));
+			addressBO.setCountry(String.valueOf(arr[14]));
+			addressBO.setState(String.valueOf(arr[13]));
+			
+			String zip = String.valueOf(arr[15]);
+			addressBO.setZip(Integer.valueOf(zip));
+			String addressType = String.valueOf(arr[16]);
+			
+			if(addressType.equals("TO")) {
+				
+				result.setToAddress(addressBO);
+			}else {
+				
+				result.setFromAddress(addressBO);
+			}
+		}
+		
+		System.out.println("Result : "+result);
+		
+		return result;
+	}
+	
+	 private Date converObjectToDate(Object date){
+		 
+		 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		 
+		 Date convertedDate=null;
+		 try { 
+			 convertedDate = sdf.parse(String.valueOf(date)); 
+			 
+	     } catch (ParseException e) { 
+	           e.printStackTrace(); 
+	     }
+		 return convertedDate; 
+	}
+
+}
+
+
+-> Write Controller class for presentation logic as get Specific Shipment Details.
+
+IndivisualShipmentDetailsController.java
+========================================
+
+@Controller
+public class IndivisualShipmentDetailsController {
+
+	@Autowired
+	private IndivisualShipmentDetailsService service;
+	
+	@GetMapping("/show-shipment-details.htm")
+	public ModelAndView getShipmentDetails(@RequestParam("shipmentId") String consignmentnumber) {
+		
+		System.out.println("consignmentnumber : "+consignmentnumber);
+		ModelAndView mav = new ModelAndView();
+		
+		IndivisualShipmentDetailsBO resultShipment = service.getIndivisualShipmentDetails(consignmentnumber);
+		mav.addObject("shipment", resultShipment);
+		mav.setViewName("show-indivisual-shipping-details");
+		
+		return mav;
+	}
+
+}
+
+-> add hyperlink inside dtdc-delivery-partner-dashboard.jsp for showing specific shipment details and mapped get request as hyperlink(show-shipment-details.htm)
+and put shipmentId as RequestParam for fetching specific shipment data.
+
+tableDataRow=tableDataRow+"<tr><td>"+(i+1)+"</td><td><a href='/show-shipment-details.htm?shipmentId="+resultArr[i]["consignmentNumber"]+"'>"+
+resultArr[i]["consignmentNumber"]+"</td><td>"+resultArr[i]["dob"]+"</td><td>"+
+
+
+dataTable.row.add([(i+1),"<a href='/show-shipment-details.htm?shipmentId="+resultArr[i]["consignmentNumber"]+"'>"+resultArr[i]["consignmentNumber"]+"</a>",
+						  resultArr[i]["dob"] ,
+						  
+						  
+-> Create a jsp page for displaying shipment details.
+
+show-indivisual-shipping-details.jsp
+====================================
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Specific Shipment Details</title>
+</head>
+<body bgcolor="GreenYellow">
+	<h1>Welcome To Specific Shipment Details</h1>
+	<form>
+		<div id="customer-details-div">
+			<table border="1px" style="background-color: Fuchsia">
+				<tr>
+					<td>Consignment Number:</td>
+					<td><input type="text" name="consignmentNo" value="${shipment.consignmentNo }" /></td>
+				</tr>
+				<tr>
+					<td>Name:</td>
+					<td><input type="text" name="name" value="${shipment.name }" /></td>
+				</tr>
+				<tr>
+					<td>Phone:</td>
+					<td><input type="text" name="phone" value="${shipment.phone }" /></td>
+				</tr>
+				<tr>
+					<td height="30px">
+						<div align="center"
+							style="width: 250px; height: 70%; background-color: Yellow; border-radius: 7px;">FROM</div>
+					</td>
+					<td height="30px">
+						<div align="center"
+							style="width: 250px; height: 70%; background-color: Yellow; border-radius: 7px;">TO</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<table border="1px" style="background-color: Turquoise">
+							<tr>
+								<td>address Line1:</td>
+								<td><input type="text" name="fromAddressLine1" value="${shipment.fromAddress.addressLine1 }" /></td>
+							</tr>
+							<tr>
+								<td>address Line2:</td>
+								<td><input type="text" name="fromAddressLine2" value="${shipment.fromAddress.addressLine2 }" /></td>
+							</tr>
+							<tr>
+								<td>city:</td>
+								<td><input type="text" name="fromCity" value="${shipment.fromAddress.city }" /></td>
+							</tr>
+							<tr>
+								<td>state:</td>
+								<td><input type="text" name="fromState" value="${shipment.fromAddress.state }" /></td>
+							</tr>
+							<tr>
+								<td>country:</td>
+								<td><input type="text" name="fromCountry" value="${shipment.fromAddress.country }" /></td>
+							</tr>
+							<tr>
+								<td>zip:</td>
+								<td><input type="text" name="fromZip" value="${shipment.fromAddress.zip }" /></td>
+							</tr>
+						</table>
+					</td>
+					<td>
+						<table border="1px" style="background-color: Turquoise">
+							<tr>
+								<td>address Line1:</td>
+								<td><input type="text" name="toAddressLine1" value="${shipment.toAddress.addressLine1 }" /></td>
+							</tr>
+							<tr>
+								<td>address Line2:</td>
+								<td><input type="text" name="toAddressLine2" value="${shipment.toAddress.addressLine2 }" /></td>
+							</tr>
+							<tr>
+								<td>city:</td>
+								<td><input type="text" name="toCity" value="${shipment.toAddress.city }" /></td>
+							</tr>
+							<tr>
+								<td>state:</td>
+								<td><input type="text" name="toState" value="${shipment.toAddress.state }" /></td>
+							</tr>
+							<tr>
+								<td>country:</td>
+								<td><input type="text" name="toCountry" value="${shipment.toAddress.country }" /></td>
+							</tr>
+							<tr>
+								<td>zip:</td>
+								<td><input type="text" name="toZip" value="${shipment.toAddress.zip }" /></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div id="booking-details-div">
+			<table>
+				<tr>
+					<td>Vas Prod Code:</td>
+					<td>
+						<input type="text" name="vasProdCode" value="${shipment.vasProdCode }" />
+					</td>
+				</tr>
+				<tr>
+					<td>Price:</td>
+					<td><input type="text" name="price" value="${shipment.bookingPrice }" /></td>
+				</tr>
+				<tr>
+					<td>Weight:</td>
+					<td><input type="text" name="itemWeight" value="${shipment.itemWeight }" /></td>
+				</tr>
+				<tr>
+					<td>Booking Date Time :</td>
+					<td><input type="text" name="bookingDtTime" value="${shipment.bookingDtTime }" /></td>
+				</tr>
+				<tr>
+					<td>BookingParsalType:</td>
+					<td>
+						<input type="text" name="bookingParcelType" value="${shipment.bookingParcelType }" />
+					</td>
+				</tr>
+				<tr>
+					<td>Quantity:</td>
+					<td>
+						<input type="text" name="quantity" value="${shipment.quantity }" />
+					</td>
+				</tr>
+				<tr>
+					<td>DELIVERY STATUS:</td>
+					<td>
+						<input type="text"  value="${shipment.deliveryStatus }" disabled="true"/>
+					</td>
+				</tr>
+				<tr>
+					<td><input type="submit" value="Update" /></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+				</tr>
+			</table>
+		</div>
+	</form>
+	
+	<a href="/dtdc-home.htm">Back</a>
+</body>
+</html>						  
+			
+Project Step - 5.2 : (Channel Partner - Update Specific Shipment Details as Delivered Showing By ConsignmentNumber)
+===================================================================================================================
+
+-> Here We need to Update Shipment as delivered to Shipment Delivery Table and insert data as collection amount to Dtdc Collection Table.
+
+-> crete a entity class for DTDC_COLLECTION and add ONE-TO-MANY mapping for consignmentNumber from shipment booking table and add one more ONE-TO-MANY 
+mapping for user from User table and crete a random key generator(UUID) for generating CDS_NO.
+
+DtdcCollection.java
+===================
+
+@Entity
+@Table(name = "DTDC_COLLECTION")
+public class DtdcCollection {
+
+	@Id
+	@SequenceGenerator(name="COLLECTION_SEQ",sequenceName = "SEQ_DTDC_COLLECTION",allocationSize=1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "COLLECTION_SEQ")
+	@Column(name = "COLLECTION_ID")
+	private int collectionId;
+	
+	@Column(name = "CDS_NO")
+	private UUID cdsNo;
+	
+	@Column(name = "CDS_DATE_TIME")
+	private Date cdsDateTime;
+	private int price;
+	
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "CONSG_NO")
+	private ShipmentBooking shipBooking;
+	
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "COLLECTION_MEMBER_ID")
+	private User collectionUser;
+
+	//setter and getter
+	
+	@PrePersist
+	protected void onCreate() { 		
+		// set the uid String
+		setCdsNo(java.util.UUID.randomUUID());
+	}
+}
+
+-> write a command class for updating and inserting partial record.
+
+UpdateIndivisualShipmentDetailsCommand.java
+===========================================
+
+public class UpdateIndivisualShipmentDetailsCommand {
+
+	private String consignmentNo;
+	private int price;
+	private String deliveryStatus;
+	private int userId;
+	
+	//setter and getter
+	//toString
+}
+
+
+->write a query for updating partial data as per consignmentNumber into shpment delivery table inside UpdateShipmentDeliveryDetailsRepository.
+
+UpdateShipmentDeliveryDetailsRepository.java
+============================================
+
+@Repository
+public interface UpdateShipmentDeliveryDetailsRepository extends CrudRepository<ShipmentDelivery, Integer>{
+	
+	@Query(value = "UPDATE SHIPMENT_DELIVERY sd SET sd.DELIVERY_STATUS=:status,sd.DOD=:dod,DELIVERY_PARTNER_ID=:userId WHERE sd.DELIVERY_CONSG_NO=:consignmentnumber", nativeQuery = true)
+	public Integer updateDeliveredShipmentStatusById(@Param("status") String status,@Param("dod") Date dod,@Param("userId") Integer userId,@Param("consignmentnumber") String consignmentnumber);
+	
+}
+
+-> create a repository for inserting collection data.
+
+UpdateDtdcCollectionDetailsRepository.java
+==========================================
+
+@Repository
+public interface UpdateDtdcCollectionDetailsRepository extends CrudRepository<DtdcCollection, Integer>{
+	
+}
+
+-> write service class for updating record inside UpdateShipmentDeliveryDetailsService class.	
+
+UpdateShipmentDeliveryDetailsService.java
+=========================================
+
+@Service
+public class UpdateShipmentDeliveryDetailsService {
+
+	@Autowired
+	private UpdateShipmentDeliveryDetailsRepository repository;
+	
+	public void shipmentUpdateByConsignmentNumber(UpdateIndivisualShipmentDetailsCommand command) {
+		
+		String cnNumber=command.getConsignmentNo();
+		System.out.println("cnNumber:"+cnNumber);
+		
+		String status=command.getDeliveryStatus();
+		System.out.println("status:"+status);
+		
+		Date todayDate = currentDate();
+		System.out.println("todayDate : "+todayDate);
+		
+		Integer userId = command.getUserId();
+		System.out.println("userId :" + userId);
+		
+		repository.updateDeliveredShipmentStatusById(status, todayDate, userId, cnNumber);
+	}
+	
+	private Date currentDate() {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy HH:mm:ss");
+		Date date = new Date();
+		try {
+			date = sdf.parse(sdf.format(date));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return date;
+	}
+}
+
+-> create a service class for save dtdc collection data.
+
+UpdateDtdcCollectionDetailsService.java
+=======================================
+
+@Service
+public class UpdateDtdcCollectionDetailsService {
+
+	@Autowired
+	private UpdateDtdcCollectionDetailsRepository repository;
+	
+	public DtdcCollection saveDtdcCollection(UpdateIndivisualShipmentDetailsCommand command,User user,ShipmentBooking booking) {
+		
+		DtdcCollection collection = new DtdcCollection();
+		collection.setPrice(command.getPrice());
+		collection.setCdsDateTime(new Date());
+		collection.setShipBooking(booking);
+		collection.setCollectionUser(user);
+		
+		DtdcCollection collectionResult = repository.save(collection);
+		
+		return collectionResult;
+		
+	}
+	
+}
+
+
+-> 	Write a delegate class for extracting business logic for insert and update for collection and delivery table.
+
+UpdateIndivisualShipmentDetailsDelegate.java
+============================================
+
+@Component
+public class UpdateIndivisualShipmentDetailsDelegate {
+
+	@Autowired
+	private UpdateShipmentDeliveryDetailsService deliveryDetailsService;
+	
+	@Autowired
+	private UpdateDtdcCollectionDetailsService collectionDetailsService;
+	
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private ShipmentBookingService bookingService;
+	
+	
+	public boolean updateDeliveryDetails(UpdateIndivisualShipmentDetailsCommand command) throws UserNotFoundException {
+		
+		//Save dtdc collection
+		ShipmentBooking booking = bookingService.findById(command.getConsignmentNo());
+		User user = userService.getUserById(command.getUserId());
+		DtdcCollection dtdcCollection = collectionDetailsService.saveDtdcCollection(command,user,booking);
+		System.out.println("DTDCCOLLECTION ID : "+dtdcCollection);
+		
+		//Update shipment delivery
+		deliveryDetailsService.shipmentUpdateByConsignmentNumber(command);
+
+		return true;
+	}
+	
+}
+
+-> Write a controller class for presentation logic for data insertion and updation.
+
+UpdateIndivisualShipmentDetailsController.java
+==============================================
+
+@Controller
+public class UpdateIndivisualShipmentDetailsController {
+	
+	@Autowired
+	private UpdateIndivisualShipmentDetailsDelegate delegate;
+
+	@PostMapping("/indivisual-shipment-updated.htm")
+	public String updateShipmentById(UpdateIndivisualShipmentDetailsCommand command,Model model) throws UserNotFoundException {
+		
+		System.out.println("Command object : "+command);
+		
+		delegate.updateDeliveryDetails(command);
+		
+		model.addAttribute("message", "Shipment Updated Successfully");
+		
+		return "shipment-updated";
+	}
+	
+}
+
+-> add post mapping url action for updating record inside show-indivisual-shipping-details.jsp 
+
+show-indivisual-shipping-details.jsp
+====================================
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Specific Shipment Details</title>
+</head>
+<body bgcolor="GreenYellow">
+	<h1>Welcome To Specific Shipment Details</h1>
+	<form action="${pageContext.request.contextPath}/indivisual-shipment-updated.htm" method="post">
+		<div id="customer-details-div">
+			<table border="1px" style="background-color: Fuchsia">
+				<tr>
+					<td>Consignment Number:</td>
+					<td><input type="text" name="consignmentNo" value="${shipment.consignmentNo }" /></td>
+				</tr>
+				<tr>
+					<td>Name:</td>
+					<td><input type="text" name="name" value="${shipment.name }" /></td>
+				</tr>
+				<tr>
+					<td>Phone:</td>
+					<td><input type="text" name="phone" value="${shipment.phone }" /></td>
+				</tr>
+				<tr>
+					<td height="30px">
+						<div align="center"
+							style="width: 250px; height: 70%; background-color: Yellow; border-radius: 7px;">FROM</div>
+					</td>
+					<td height="30px">
+						<div align="center"
+							style="width: 250px; height: 70%; background-color: Yellow; border-radius: 7px;">TO</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<table border="1px" style="background-color: Turquoise">
+							<tr>
+								<td>address Line1:</td>
+								<td><input type="text" name="fromAddressLine1" value="${shipment.fromAddress.addressLine1 }" /></td>
+							</tr>
+							<tr>
+								<td>address Line2:</td>
+								<td><input type="text" name="fromAddressLine2" value="${shipment.fromAddress.addressLine2 }" /></td>
+							</tr>
+							<tr>
+								<td>city:</td>
+								<td><input type="text" name="fromCity" value="${shipment.fromAddress.city }" /></td>
+							</tr>
+							<tr>
+								<td>state:</td>
+								<td><input type="text" name="fromState" value="${shipment.fromAddress.state }" /></td>
+							</tr>
+							<tr>
+								<td>country:</td>
+								<td><input type="text" name="fromCountry" value="${shipment.fromAddress.country }" /></td>
+							</tr>
+							<tr>
+								<td>zip:</td>
+								<td><input type="text" name="fromZip" value="${shipment.fromAddress.zip }" /></td>
+							</tr>
+						</table>
+					</td>
+					<td>
+						<table border="1px" style="background-color: Turquoise">
+							<tr>
+								<td>address Line1:</td>
+								<td><input type="text" name="toAddressLine1" value="${shipment.toAddress.addressLine1 }" /></td>
+							</tr>
+							<tr>
+								<td>address Line2:</td>
+								<td><input type="text" name="toAddressLine2" value="${shipment.toAddress.addressLine2 }" /></td>
+							</tr>
+							<tr>
+								<td>city:</td>
+								<td><input type="text" name="toCity" value="${shipment.toAddress.city }" /></td>
+							</tr>
+							<tr>
+								<td>state:</td>
+								<td><input type="text" name="toState" value="${shipment.toAddress.state }" /></td>
+							</tr>
+							<tr>
+								<td>country:</td>
+								<td><input type="text" name="toCountry" value="${shipment.toAddress.country }" /></td>
+							</tr>
+							<tr>
+								<td>zip:</td>
+								<td><input type="text" name="toZip" value="${shipment.toAddress.zip }" /></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div id="booking-details-div">
+			<table>
+				<tr>
+					<td>Vas Prod Code:</td>
+					<td>
+						<input type="text" name="vasProdCode" value="${shipment.vasProdCode }" />
+					</td>
+				</tr>
+				<tr>
+					<td>Price:</td>
+					<td><input type="text" name="price" value="${shipment.bookingPrice }" /></td>
+				</tr>
+				<tr>
+					<td>Weight:</td>
+					<td><input type="text" name="itemWeight" value="${shipment.itemWeight }" /></td>
+				</tr>
+				<tr>
+					<td>Booking Date Time :</td>
+					<td><input type="text" name="bookingDtTime" value="${shipment.bookingDtTime }" /></td>
+				</tr>
+				<tr>
+					<td>BookingParsalType:</td>
+					<td>
+						<input type="text" name="bookingParcelType" value="${shipment.bookingParcelType }" />
+					</td>
+				</tr>
+				<tr>
+					<td>Quantity:</td>
+					<td>
+						<input type="text" name="quantity" value="${shipment.quantity }" />
+						<input type="hidden" name="userId" value="${userId}"/>
+					</td>
+				</tr>
+				<tr>
+					<td>DELIVERY STATUS:</td>
+					<td>
+						<input type="text"  value="${shipment.deliveryStatus }" disabled="true"/>
+						<input type="hidden" name="deliveryStatus" value="delivered" />
+					</td>
+				</tr>
+				<tr>
+					<td><input type="submit" value="Update" /></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+				</tr>
+			</table>
+		</div>
+	</form>
+	
+	<a href="/dtdc-home.htm">Back</a>
+</body>
+</html>
+
+-> After Hiting on update button shipment update successfully message should shown.
+
+shipment-updated.jsp
+====================
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>${message}</h1>
+</body>
+</html>
