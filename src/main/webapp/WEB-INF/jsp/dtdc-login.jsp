@@ -12,7 +12,7 @@
 	</head>
 	<body>
 		<h1>DTDC USER LOGIN</h1>
-		<form:form modelAttribute="dtdcLogin">
+		<form:form action="/dtdc-login.htm" modelAttribute="dtdcLogin">
 			<div id="error-div">
 				<span style="color: red">
 					<form:errors path="*"/>

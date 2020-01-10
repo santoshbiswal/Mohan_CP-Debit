@@ -30,6 +30,17 @@ public class ShipmentBookingService {
 		
 		return repository.findPrice(source, destination);
 	}
+	
+	public boolean isShipmentAvailable(String shipmentNumber) {
+		
+		Integer count = repository.getBookingCountByShipmentNumber(shipmentNumber);
+		
+		if(count == 0) {
+			
+			return false;
+		}
+		return true;
+	}
 
 	public ShipmentBooking findById(String id) {
 		

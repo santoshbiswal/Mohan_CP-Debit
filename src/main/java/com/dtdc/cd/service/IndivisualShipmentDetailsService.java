@@ -86,7 +86,7 @@ public class IndivisualShipmentDetailsService {
 	
 	 private Date converObjectToDate(Object date){
 		 
-		 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		 SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa");
 		 
 		 Date convertedDate=null;
 		 try { 

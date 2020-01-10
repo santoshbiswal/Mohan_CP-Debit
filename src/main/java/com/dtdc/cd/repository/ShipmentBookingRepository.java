@@ -36,4 +36,6 @@ public interface ShipmentBookingRepository extends CrudRepository<ShipmentBookin
 	@Query(value="select s.CONSG_NO,s.SOURCE,s.DESTINATION,s.BOOKING_DATE_TIME,d.DELIVERY_STATUS,d.REMARKS FROM SHIPMENT_BOOKING s,SHIPMENT_DELIVERY d WHERE s.CONSG_NO=d.DELIVERY_CONSG_NO and s.SOURCE=:source and s.DESTINATION=:destination",nativeQuery = true)
 	public List<Object[]> getShipmentAndStatusBySourceAndDest(@Param("source")String source,@Param("destination")String destination);
 	
+	@Query(value = "select count(sb.CONSG_NO) from SHIPMENT_BOOKING sb where sb.CONSG_NO=:shipmentNumber and sb.VAS_PROD_CODE in('cod','fod','pob')",nativeQuery = true)
+	public Integer getBookingCountByShipmentNumber(@Param("shipmentNumber")String shipmentNumber);
 }

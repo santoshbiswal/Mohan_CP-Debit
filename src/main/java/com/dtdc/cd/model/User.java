@@ -48,6 +48,17 @@ public class User implements Serializable{
 	@OneToMany(mappedBy = "collectionUser")
 	private Set<DtdcCollection> dtdcCollections;
 	
+	@OneToMany(mappedBy = "logUser")
+	private Set<CPDebitLog> cpDebitLogs;
+	
+	public Set<CPDebitLog> getCpDebitLogs() {
+		return cpDebitLogs;
+	}
+
+	public void setCpDebitLogs(Set<CPDebitLog> cpDebitLogs) {
+		this.cpDebitLogs = cpDebitLogs;
+	}
+
 	public Set<DtdcCollection> getDtdcCollections() {
 		return dtdcCollections;
 	}

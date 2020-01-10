@@ -37,7 +37,7 @@
 			<div class="panel-body"
 				style="background-color: #fff; border-radius: 4px; overflow: auto;">
 				<form id="cpDebitForm" method="post" enctype="multipart/form-data"
-					action="/CP-Debit/upload">
+					action="/upload">
 					<table class="table table-bordered" id="example">
 						<thead style="background-color: #62a8e4;">
 							<tr>
@@ -80,7 +80,7 @@
 		</div>
 
 		<!----- Graph Section Ends ----->
-		<form name="downloadData" id="downloadDataForm" action="/CP-Debit/download" method="post">
+		<form name="downloadData" id="downloadDataForm" action="/download" method="post">
                 <input type="hidden" name="consgList" id="consgList" />
 		</form>
 		
@@ -108,7 +108,7 @@
                 $.ajax({
                     type: "POST",
                     enctype: 'multipart/form-data',
-                    url: "/CP-Debit/upload",
+                    url: "/upload",
                     data: data,
                     processData: false,
                     contentType: false,
@@ -149,19 +149,6 @@
                 $("#cpdebitsubmit").html("Submit");
         }
 
-
-		/* function checkfile() {
-			
-			var validExts = new Array(".xlsx", ".xls");
-			var fileExt = $('#file').val();
-			fileExt = fileExt.substring(fileExt.lastIndexOf('.'));
-			if (validExts.indexOf(fileExt) < 0) {
-				alert("Invalid file selected, valid files are of " + validExts.toString() + " types.");
-				return false;
-			}
-			else return true;
-		}
-		 */
 </script>
 <a href="/dtdc-logout.htm">Logout</a>	
 </html>

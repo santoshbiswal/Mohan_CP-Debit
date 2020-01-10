@@ -16,4 +16,15 @@ public class ShipmentDeliveryService {
 		
 		return repository.save(delivery);
 	}
+	
+	public boolean isShipmentDelivered(String shipmentNumber) {
+		
+		Integer count=repository.getCount(shipmentNumber);
+		
+		if(count==0) {
+			
+			return false;
+		}	
+		return true;
+	}
 }
